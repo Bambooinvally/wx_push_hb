@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+    
+    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet"> 
+    <link rel="stylesheet" href="{% static 'css/footer.css'%}">
+    
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/3.3.4/js/bootstrap.min.js'%}"></script> 
+    
+    <title>魔眼</title>
+    <style type="text/css">
+        .board {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            padding: 30px 30px 40px 40px;
+            height: 430px;
+            overflow: auto;
+        }
+        .text-white {
+           color: white;
+        }
+        body {
+            background:
+            url(/static/images/background.jpg)
+            no-repeat;
+        }
+    </style>
+</head>
+<body class="modal-open" style="padding-right: 15px;">
+<div class="wrapper">
+    <p></p>
+    <div class="container">
+        <p></p>
+{#        <div class="row">#}
+{#            <div class="col-md-1"></div>#}
+{#            <div>#}
+{#                <a href="http://hdu.sunnysport.org.cn/apk/sunrun_1.0.apk" style="color: red;">#}
+{#                    手机app安卓版下载地址：http://hdu.sunnysport.org.cn/apk/sunrun_1.0.apk#}
+{#                </a>#}
+{#            </div>#}
+{##}
+{#        </div>#}
+    <p></p><p></p>
+        <div class="row banner">
+            <div class="col-md-1"></div>
+            <div class="col-md-3 board text-white">
+                <h3>
+                    <strong>用户登录</strong>
+                </h3>
+                <form action="/login/" method="post">
+                    <div class="form-group">
+                        <label><span class="glyphicon glyphicon-user"></span>用户名</label>
+                        <input type="text" class="form-control" name="username" placeholder="输入账号">
+                        <input type="hidden" class="form-control" name="vrf" value="{{ vrf }}">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="glyphicon glyphicon-lock"></span>密码</label> <input type="password"
+                                                                                               class="form-control"
+                                                                                               name="password"
+                                                                                               placeholder="输入密码">
+                    </div>
+                    <p>
+                    </p>
+                    <br> <br>
+                    <button type="submit" class="btn btn-success btn-block">登录</button>
+                </form>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+</div>
+
+{% include 'base/common/error.html' %}
+<footer class="text-center">
+    Copyright © 2020 杭州电子科技大学CAD研究所 All Rights Reserved
+</footer>
+
+</body>
+</html>

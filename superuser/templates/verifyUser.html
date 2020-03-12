@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block achievements %} active {% endblock %}
+{% load staticfiles %}
+
+{% block extlib %}
+    <!--bootstrap table -->
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>
+            <strong>待审核用户列表</strong>
+        </h1>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <div class="list-group">
+                        {% for uuser in uncofirmUsers %}
+                            <div class="list-group-item">
+                                <div class="list-group-item-heading row">
+                                    <div class="col-md-2">
+                                        <label>{{ uuser.name }}</label>
+                                    </div>
+                                </div>
+                                <div class="list-group-item-text">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <p>手机号：{{ uuser.phone }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <p>地址：{{ uuser.address }}</p>
+                                        </div>
+                                        <input type="hidden" value="{{ uuser.openId }}"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p>
+                                            <a href="/dashboard/user/info/19205305/" class="btn btn-success">
+                                                <span class="glyphicon glyphicon-search"> 通过</span>
+                                            </a>
+                                        </p>
+                                        <p>
+                                            <a href="/dashboard/user/info/19205305/" class="btn btn-danger">
+                                                <span class="glyphicon glyphicon-search"> 不通过</span>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>日期</th>
+                            <th>姓名</th>
+                            <th>手机号</th>
+                            <th>地址</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for uuser in uncofirmUsers %}
+                            <tr class="">
+                                <td>{{ forloop.counter }}</td>
+                                <td><input type="hidden" value="{{ uuser.openId }}"/></td>
+                                <td>{{ uuser.name }}</td>
+                                <td>{{ uuser.phone }}</td>
+                                <td>{{ uuser.address }}</td>
+                                <td>
+
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end of row -->
+{% endblock %}
+
+<script type="text/javascript">
+    {% ifnotequal message '' %}
+        $('#msgDialog').modal('show');
+    {% endifnotequal %}
+    $.validate({
+        modules: "security"
+    });
+
+</script>

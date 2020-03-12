@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block achievements %} active {% endblock %}
+{% load staticfiles %}
+
+{% block extlib %}
+    <!--bootstrap table -->
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>
+            <strong>查询用户信息</strong>
+        </h1>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <!--查询-->
+            <div class="row">
+                <div class="col-md-5 col-md-offset-3">
+                    <p class="text-muted">
+                        <small>输入部分手机号的时候，按前缀匹配， 如输入15则查询以15开头的手机号</small>
+                    </p>
+                    <form action="/dashboard/user/query.html" method="GET">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="qdata" placeholder="搜索" value="">
+                            <span class="input-group-btn">
+                                <button class="btn btn-info" type="submit">
+                                    <span class="glyphicon glyphicon-search"> 搜索</span>
+                                </button>
+                            </span>
+                        </div>
+                        </label> <label class="radio-inline"> <input type="radio" name="qtype" value="name"> 姓名
+                        <label class="radio-inline"> <input type="radio" name="qtype" value="phone" checked="checked">
+                        手机号
+                    </label>
+                    </form>
+                </div>
+            </div>
+            <!--列表-->
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="list-group">
+                        {% for user in users %}
+                            <div class="list-group-item">
+                                <div class="list-group-item-text">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <p>手机号：{{ user.name }}</p>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <p>手机号：{{ uuser.phone }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <p>地址：{{ uuser.address }}</p>
+                                        </div>
+                                        <input type="hidden" value="{{ uuser.openId }}"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p>
+                                            <a href="/dashboard/user/info/19205305/" class="btn btn-success">
+                                                <span class="glyphicon glyphicon-search"> 修改</span>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>日期</th>
+                            <th>姓名</th>
+                            <th>手机号</th>
+                            <th>地址</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for uuser in uncofirmUsers %}
+                            <tr class="">
+                                <td>{{ forloop.counter }}</td>
+                                <td><input type="hidden" value="{{ uuser.openId }}"/></td>
+                                <td>{{ uuser.name }}</td>
+                                <td>{{ uuser.phone }}</td>
+                                <td>{{ uuser.address }}</td>
+                                <td>
+
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end of row -->
+{% endblock %}
+
+<script type="text/javascript">
+    {% ifnotequal message '' %}
+        $('#msgDialog').modal('show');
+    {% endifnotequal %}
+    $.validate({
+        modules: "security"
+    });
+
+</script>
