@@ -7,24 +7,33 @@ from multiprocessing import Process, Queue
 import logging
 import time
 from app.configutils import getconfig, ACCESS_TOKEN
-from app.models import WxUser, get_or_none
+from app.models import WxUser, get_or_none, URLSource
 from app.wxHandler import handlerSendWarningMessage
+from service.UrlService import get_urls
 from service.wxutils import WxMessageUtil
 
 logger = logging.getLogger(__name__)
 
+"""
+需要重新测试：添加了source_id
+"""
+
 
 def getWarn(warnData):
     type = ["POWER", "REMAIN_CUR", "ARC", "SMOKE", "APP", "LINE_TEMP"]
-    url = "https://www.zjzwfwtech.com/api/dangerlist.json/"
+    # url = "https://www.zjzwfwtech.com/api/dangerlist.json/"
     while True:
-        for i in type:
-            data = requests.post(url, data={"type": i})
-            if data.status_code == 200:
-                dataLst = json.loads(data.content.decode())
-                print(dataLst)
-                for i in dataLst:
-                    warnData.put(i)
+        # 获取所有的url
+        url_map = get_urls()
+        for source_id in url_map:
+            url = url_map[source_id]
+            for i in type:
+                data = requests.post(url, data={"type": i})
+                if data.status_code == 200:
+                    dataLst = json.loads(data.content.decode())
+                    for j in dataLst:
+                        j["source_id"] = source_id
+                        warnData.put(j)
         time.sleep(5 * 60)
 
 
@@ -32,7 +41,7 @@ def prepareData(warnData, pushData):
     while True:
         try:
             data = warnData.get(True)
-            wxUsers = WxUser.objects.filter(ammeter_id=data["ammeterId"], subscribe=True)
+            wxUsers = WxUser.objects.filter(ammeter_id=data["ammeterId"], source_id=data["source_id"], subscribe=True)
             if len(wxUsers) > 0:
                 access_token = getconfig(ACCESS_TOKEN, "")
                 template_data = handlerSendWarningMessage(data)

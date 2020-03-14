@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block achievements %} active {% endblock %}
+{% block search %} active {% endblock %}
 {% load staticfiles %}
 
 {% block extlib %}
@@ -21,19 +21,30 @@
                     <p class="text-muted">
                         <small>输入部分手机号的时候，按前缀匹配， 如输入15则查询以15开头的手机号</small>
                     </p>
-                    <form action="/dashboard/user/query.html" method="GET">
+                    <form action="/super/search/user" method="POST">
                         <div class="input-group">
-                            <input type="text" class="form-control" name="qdata" placeholder="搜索" value="">
+                            <input type="text" class="form-control" name="qdata" placeholder="搜索"
+                                   value="{{ request.POST.qdata }}">
                             <span class="input-group-btn">
                                 <button class="btn btn-info" type="submit">
                                     <span class="glyphicon glyphicon-search"> 搜索</span>
                                 </button>
                             </span>
                         </div>
-                        </label> <label class="radio-inline"> <input type="radio" name="qtype" value="name"> 姓名
-                        <label class="radio-inline"> <input type="radio" name="qtype" value="phone" checked="checked">
-                        手机号
-                    </label>
+                        {% if  request.POST.qtype == 'phone' %}
+                            <label class="radio-inline"> <input type="radio" name="qtype" value="name"
+                                                                > 姓名</label>
+                            <label class="radio-inline"> <input type="radio" name="qtype" value="phone" checked="checked">
+                                手机号
+                            </label>
+                        {% else %}
+                            <label class="radio-inline"> <input type="radio" name="qtype" value="name"
+                                                                checked="checked"> 姓名</label>
+                            <label class="radio-inline"> <input type="radio" name="qtype" value="phone">
+                                手机号
+                            </label>
+                        {% endif %}
+
                     </form>
                 </div>
             </div>
@@ -45,59 +56,37 @@
                             <div class="list-group-item">
                                 <div class="list-group-item-text">
                                     <div class="row">
-                                        <div class="col-md-5">
-                                            <p>手机号：{{ user.name }}</p>
+                                        <div class="col-md-4">
+                                            <p>姓名：{{ user.name }}</p>
                                         </div>
-                                        <div class="col-md-5">
-                                            <p>手机号：{{ uuser.phone }}</p>
+                                        <div class="col-md-4">
+                                            <p>手机号：{{ user.phone }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>身份证：{{ user.IDcard }}</p>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-10">
-                                            <p>地址：{{ uuser.address }}</p>
+                                            <p>地址：{{ user.address }}</p>
                                         </div>
-                                        <input type="hidden" value="{{ uuser.openId }}"/>
+                                        <input type="hidden" value="{{ user.openId }}"/>
                                     </div>
-                                    <div class="col-md-4">
-                                        <p>
-                                            <a href="/dashboard/user/info/19205305/" class="btn btn-success">
-                                                <span class="glyphicon glyphicon-search"> 修改</span>
-                                            </a>
-                                        </p>
+                                    <div class="row ">
+                                        <div class="col-md-offset-8  col-md-4">
+                                            <p>
+                                                <a href="/super/modify/user/?pk={{ user.pk }}" class="modify-wxinfo btn btn-success">
+                                                    <span class="glyphicon glyphicon-info-sign"> 详情</span>
+                                                </a>
+                                            </p>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
 
                     </div>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>日期</th>
-                            <th>姓名</th>
-                            <th>手机号</th>
-                            <th>地址</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for uuser in uncofirmUsers %}
-                            <tr class="">
-                                <td>{{ forloop.counter }}</td>
-                                <td><input type="hidden" value="{{ uuser.openId }}"/></td>
-                                <td>{{ uuser.name }}</td>
-                                <td>{{ uuser.phone }}</td>
-                                <td>{{ uuser.address }}</td>
-                                <td>
-
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

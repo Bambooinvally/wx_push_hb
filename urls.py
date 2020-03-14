@@ -30,10 +30,10 @@ urlpatterns = [
     
     # 管理员
     
-    url("^logout", suview.my_logout, name='my_logout'),
-    url("^login", suview.my_login, name='my_login'),
-    url("^super/modify/user", suview.modefy_user_info, name='modify-user'),
-    url("^super/verify/user", suview.verify_user_info, name='verify-user'),
-    url("^super/search/user", suview.search_user, name='search-user'),
+    url("^/logout", suview.logout, name='logout'),
+    url("^/login", suview.login, name='login'),
+    url("^/super/modify/user", suview.modefy_user_info, name='login'),
+    url("^/super/verify/user", suview.login, name='login'),
+    url("^/super/search/user", suview.login, name='login'),
 
 ]

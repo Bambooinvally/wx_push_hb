@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block achievements %} active {% endblock %}
+{% block verify %} active {% endblock %}
 {% load staticfiles %}
 
 {% block extlib %}
@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
-                    <div class="list-group">
+                    <div id="listContain" class="list-group">
                         {% for uuser in uncofirmUsers %}
                             <div class="list-group-item">
                                 <div class="list-group-item-heading row">
@@ -38,57 +38,107 @@
                                         </div>
                                         <input type="hidden" value="{{ uuser.openId }}"/>
                                     </div>
-                                    <div class="col-md-4">
-                                        <p>
-                                            <a href="/dashboard/user/info/19205305/" class="btn btn-success">
-                                                <span class="glyphicon glyphicon-search"> 通过</span>
-                                            </a>
-                                        </p>
-                                        <p>
-                                            <a href="/dashboard/user/info/19205305/" class="btn btn-danger">
-                                                <span class="glyphicon glyphicon-search"> 不通过</span>
-                                            </a>
-                                        </p>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <p>
+                                                <button data-openid="{{ uuser.openId }}"
+                                                        class="verify-ok btn btn-success">
+                                                    <span class="glyphicon glyphicon-ok"> 通过</span>
+                                                </button>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-3 col-md-offset-6">
+                                            <p>
+                                                <button data-openid="{{ uuser.openId }}"
+                                                        class="verify-remove btn btn-danger">
+                                                    <span class="glyphicon glyphicon-remove"> 不通过</span>
+                                                </button>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
 
                     </div>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>日期</th>
-                            <th>姓名</th>
-                            <th>手机号</th>
-                            <th>地址</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for uuser in uncofirmUsers %}
-                            <tr class="">
-                                <td>{{ forloop.counter }}</td>
-                                <td><input type="hidden" value="{{ uuser.openId }}"/></td>
-                                <td>{{ uuser.name }}</td>
-                                <td>{{ uuser.phone }}</td>
-                                <td>{{ uuser.address }}</td>
-                                <td>
-
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- end of row -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".verify-remove").click(function () {
+                var openId = $(this).attr("data-openid");
+                postOpenid("/super/verify/user", openId, false);
+            });
+
+            $(".verify-ok").click(function () {
+                var openId = $(this).attr("data-openid");
+                postOpenid("/super/verify/user", openId, true);
+            });
+        });
+
+        function postOpenid(path, openId, verify) {
+            $.ajax({
+                url: path,
+                type: "POST",
+                async: true,
+                data: {"openId": openId, "verify": verify},
+                success: function (res) {
+                    var data = JSON.parse(res);
+                    if (data.state) {
+                        var list = JSON.parse(data.data);
+                        str = "";
+                        var item ;
+                        for (var i=0;i<list.length;++i) {
+                            item = list[i];
+                            str += "<div class=\"list-group-item\">\n" +
+                                "                                <div class=\"list-group-item-heading row\">\n" +
+                                "                                    <div class=\"col-md-2\">\n" +
+                                "                                        <label> " + item.fields.name + " </label>\n" +
+                                "                                    </div>\n" +
+                                "                                </div>\n" +
+                                "                                <div class=\"list-group-item-text\">\n" +
+                                "                                    <div class=\"row\">\n" +
+                                "                                        <div class=\"col-md-5\">\n" +
+                                "                                            <p>手机号： " + item.fields.phone + " </p>\n" +
+                                "                                        </div>\n" +
+                                "                                    </div>\n" +
+                                "                                    <div class=\"row\">\n" +
+                                "                                        <div class=\"col-md-10\">\n" +
+                                "                                            <p>地址：" + item.fields.address + " </p>\n" +
+                                "                                        </div>\n" +
+                                "                                    </div>\n" +
+                                "                                    <div class=\"row\">\n" +
+                                "                                        <div class=\"col-md-3\">\n" +
+                                "                                            <p>\n" +
+                                "                                                <button data-openid=\" " + item.fields.openId + " \"\n" +
+                                "                                                        class=\"verify-ok btn btn-success\">\n" +
+                                "                                                    <span class=\"glyphicon glyphicon-ok\"> 通过</span>\n" +
+                                "                                                </button>\n" +
+                                "                                            </p>\n" +
+                                "                                        </div>\n" +
+                                "                                        <div class=\"col-md-3 col-md-offset-6\">\n" +
+                                "                                            <p>\n" +
+                                "                                                <button data-openid=\"" + item.fields.openId + " \"\n" +
+                                "                                                        class=\"verify-remove btn btn-danger\">\n" +
+                                "                                                    <span class=\"glyphicon glyphicon-remove\"> 不通过</span>\n" +
+                                "                                                </button>\n" +
+                                "                                            </p>\n" +
+                                "                                        </div>\n" +
+                                "                                    </div>\n" +
+                                "                                </div>\n" +
+                                "                            </div>";
+                        }
+                        console.log(str);
+                        $("#listContain").html(str)
+                    }
+                }
+            })
+        }
+    </script>
 {% endblock %}
 
 <script type="text/javascript">
@@ -100,3 +150,4 @@
     });
 
 </script>
+
