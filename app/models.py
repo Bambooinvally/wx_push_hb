@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -17,7 +19,7 @@ class WxUser(models.Model):
     """
     
     """
-    openId = models.CharField("微信的openid", max_length=255, primary_key=True)
+    openId = models.CharField("微信的openid", max_length=255, db_index=True)
     nickname = models.CharField("微信名字", max_length=255, null=True, blank=True)
     # 0是女，1是男
     sex = models.NullBooleanField(null=True, blank=True)
@@ -32,6 +34,10 @@ class WxUser(models.Model):
     name = models.CharField("注册时的名字", max_length=100, null=True, blank=True)
     phone = models.CharField("注册时的手机", max_length=100, null=True, blank=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
+    address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
+    
+    source_id = models.IntegerField("source的外键", null=True)
+    vaild = models.NullBooleanField("是否注销", default=False)
     
     class Meta:
         db_table = 'wxUser'
@@ -68,14 +74,27 @@ class Menu(models.Model):
                  "pic_weixin", "location_select", "media_id", "view_limited")
 
 
+# 额外添加的表
+class URLSource(models.Model):
+    url = models.CharField(max_length=255, null=True)
+    desc = models.CharField(max_length=100, null=True)
+    vaild = models.BooleanField()
+    
+    class Meta:
+        db_table = 'urlsource'
+
+
 class UnconfirmUser(models.Model):
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
     phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
     openId = models.CharField("微信的openid", max_length=255, primary_key=True)
     
-    # 可以考虑加一下时间
-    # createTime = models.BigIntegerField(null=True)
+    # 需要添加的额外信息
+    createTime = models.BigIntegerField(null=True, default=int(datetime.datetime.now().timestamp()))
+    extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
+    IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
+    source = models.CharField("源名", max_length=100, null=True, blank=True)  # URLSource中的desc
     
     class Meta:
         db_table = 'unconfirmUser'
