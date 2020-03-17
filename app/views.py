@@ -90,6 +90,7 @@ def create_menu(request):
             }
         ]
     }
+    print('in create menu access token is:'+str(access_token))
     return HttpResponse(WxMenuUtil.create_menu(access_token, menu).decode())
 
 
