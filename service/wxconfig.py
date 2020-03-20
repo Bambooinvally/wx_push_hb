@@ -6,7 +6,7 @@ url 地址
 from urllib import parse
 
 from wx_push import specsetting
-from wx_push.specsetting import RESGER_URL, MODIFY_INFO_URL, SUPERUSER_MODIFY_INFO_URL
+from wx_push.specsetting import RESGER_URL, MODIFY_INFO_URL, SUPERUSER_MODIFY_INFO_URL, SUPERUSER_LOGIN_URL
 
 ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
 SEND_TEMPLATE_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/templates/send"
@@ -54,6 +54,13 @@ GET_CODE = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" \
 MODIFY_INFO = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" \
            + APPID + "&" \
            "redirect_uri=" + MODIFY_INFO_URL + \
+           "&response_type=code" \
+           "&scope=snsapi_base&" \
+           "state=123#wechat_redirect"
+
+SUPERUSER_LOGIN = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" \
+           + APPID + "&" \
+           "redirect_uri=" + SUPERUSER_LOGIN_URL + \
            "&response_type=code" \
            "&scope=snsapi_base&" \
            "state=123#wechat_redirect"

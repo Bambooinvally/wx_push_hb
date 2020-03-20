@@ -4,7 +4,7 @@ from django.core.management import call_command
 
 import logging
 
-from app.models import WxUser
+from app.models import WxUser,SuperUser
 
 logger = logging.getLogger(__name__)
 
@@ -18,4 +18,4 @@ class Command(BaseCommand):
         User.objects.get_or_create(username='admin',
                                    defaults={'is_superuser': 1, 'is_active': 1, 'password': 'wxpushadmin'})
         # 添加自己的微信openid
-        WxUser.objects.get_or_create(openId="o-XSVwQPdEYOUWcq6QD9F0V9K9DU", sex=True, subscribe_time=1, subscribe=1)
+        SuperUser.objects.get_or_create(openId="o-XSVwRj5uPsuu4C3ckFLpsxqPsc", name='zty')

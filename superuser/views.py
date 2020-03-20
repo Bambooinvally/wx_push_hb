@@ -10,10 +10,12 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, render_to_response, get_object_or_404
 
+from app.configutils import getconfig
+from service.wxutils import WxUserTagUtil
 # Create your views here.
 from django.contrib.auth import logout, authenticate
 
-from app.models import UnconfirmUser, WxUser, get_or_none
+from app.models import UnconfirmUser, WxUser, get_or_none, SuperUser
 
 
 class PasswordError(Exception):
@@ -39,37 +41,49 @@ class LoginBackend(object):
             return None
 
 
+# def my_login(request):
+#     if request.method == 'GET':
+#         vrf = random.uniform(10, 20)
+#         pagedatas = {
+#             'request': request,
+#             'vrf': vrf
+#         }
+#         request.session['vrf'] = vrf
+#         # print(vrf)
+#         return render_to_response('login.html', pagedatas)
+#     elif request.method == 'POST':
+#         username = request.POST.get('username', '')
+#         password = request.POST.get('password', '')
+#         vrf = request.POST.get('vrf', '')
+#         if str(request.session['vrf']) != vrf:
+#             return HttpResponse("gundanba")
+#         try:
+#             user = authenticate(username=username, password=password)
+#         except PasswordError:
+#             return HttpResponseRedirect(reverse('my_login') + '?err=true&msg=密码不正确!')
+#         except User.DoesNotExist:
+#             return HttpResponseRedirect(reverse('my_login') + '?err=true&msg=账号不存在!')
+#         else:
+#             request.session['username'] = username
+#             login(request, user)
+#             if user.is_superuser:
+#                 return HttpResponseRedirect(reverse('verify-user'))
+#             else:
+#                 return HttpResponseRedirect(reverse('my_login'))
+#     else:
+#         return HttpResponse("gundan")
+
 def my_login(request):
-    if request.method == 'GET':
-        vrf = random.uniform(10, 20)
-        pagedatas = {
-            'request': request,
-            'vrf': vrf
-        }
-        request.session['vrf'] = vrf
-        # print(vrf)
-        return render_to_response('login.html', pagedatas)
-    elif request.method == 'POST':
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        vrf = request.POST.get('vrf', '')
-        if str(request.session['vrf']) != vrf:
-            return HttpResponse("gundanba")
-        try:
-            user = authenticate(username=username, password=password)
-        except PasswordError:
-            return HttpResponseRedirect(reverse('my_login') + '?err=true&msg=密码不正确!')
-        except User.DoesNotExist:
-            return HttpResponseRedirect(reverse('my_login') + '?err=true&msg=账号不存在!')
-        else:
-            request.session['username'] = username
-            login(request, user)
-            if user.is_superuser:
-                return HttpResponseRedirect(reverse('verify-user'))
-            else:
-                return HttpResponseRedirect(reverse('my_login'))
-    else:
-        return HttpResponse("gundan")
+    """
+    使用微信的openid进行管理员认证
+    :param request:
+    :return:
+    """
+    code = request.GET.get('code',-1)
+    openId = request.POST.get('openId','')
+    local_check = get_or_none(SuperUser,openId=openId)
+    tag_check = WxUserTagUtil.getUserTag(getconfig("access_token", ""),openId)
+    print(code,request.body,openId,local_check,tag_check)
 
 
 @login_required()

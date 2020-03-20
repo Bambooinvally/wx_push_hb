@@ -12,7 +12,7 @@ from app.configutils import getconfig
 from app.models import WxUser, UnconfirmUser, get_or_none
 from app.wxHandler import dispatch_message
 from service.Template import TemplateContent, TemplateIdParams
-from service.wxconfig import WEBURL, APPID, SECTET, GET_OPENID_URL, GET_CODE
+from service.wxconfig import WEBURL, APPID, SECTET, GET_OPENID_URL, GET_CODE, SUPERUSER_LOGIN
 from service.wxutils import WxMenuUtil, WxMessageUtil, get_access_token
 from urllib import parse
 
@@ -39,7 +39,7 @@ def recv_message(request):
             data = request.body
             xml_recv = ET.fromstring(data)
             xml_response = dispatch_message(xml_recv)
-            print(xml_response)
+            # print(data)
             return HttpResponse(xml_response,
                                 content_type="text/html; charset=UTF-8")
     elif request.method == "GET":
@@ -126,7 +126,8 @@ def create_superMenu(request):
                     {
                         "type": "view",
                         "name": "管理员登录",
-                        "url": SUPERUSER_LOGIN_URL
+                        "url": SUPERUSER_LOGIN,
+                        "key": 'admin_login'
                     },
                     # 小程序暂时不关联
                     # {

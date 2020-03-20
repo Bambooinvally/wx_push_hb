@@ -377,10 +377,15 @@ class WxUserTagUtil:
         re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/getidlist',
                            params={'access_token': access_token},
                            data=json.dumps({'openid': openid}))
-        return json.loads(re.content)["tagid_list"]
+        try:
+            tag = json.loads(re.content)["tagid_list"]
+        except Exception as e:
+            tag = ''
+            print('get tag error',e)
+        return tag
 
 
 if __name__ == "__main__":
-    access_token = '31_ANeiyZWJqm2AhgBNm50GEC1ieHwrOdeugCc5uCW_0vFZrULGCYFBzAl6QUGopmIbfXHuVAc2P0Evt5q1aKl4MuiIONqHJueRDbHj7wNRkgRrQIPkpWHjnvmWaBkci26MICETdcAOGIZCQWUrEVFjAFANEO'
-    print(WxUserTagUtil.getTag(access_token))
+    access_token = '31_ljS0q-Y5TjgatmrpNinHxvvL6-0OBOHeQN2wLzZ1ehQxjt5KMH_F-br-mK2K2gVI7a2HdL1kvK19tbEL45r6-xY481RXAl7LiVLXDY4XhB9Isf2Pz8oFhiYhKTBOcOy05d6_ZFVlrYXTKoZ0JMDiACAORI'
+    print(WxMenuUtil)
     print(WxUserTagUtil.getUserByTag(access_token,101))

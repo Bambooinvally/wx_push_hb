@@ -115,7 +115,7 @@ class UnconfirmUser(models.Model):
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
 
     # 需要添加的额外信息
-    createTime = models.DateTimeField(default=datetime.datetime.now())
+    createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
     ammeter = models.ManyToManyField('Ammeters')
@@ -131,7 +131,7 @@ class ConfirmedUser(models.Model):
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
 
     # 需要添加的额外信息
-    createTime = models.DateTimeField(default=datetime.datetime.now())
+    createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
     ammeter = models.ManyToManyField('Ammeters')
@@ -147,11 +147,11 @@ class SuperUser(models.Model):
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
 
     # 需要添加的额外信息
-    createTime = models.DateTimeField(default=datetime.datetime.now())
+    createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
-    ammeter = models.ManyToManyField('Ammeters')
-
+    source_id = models.IntegerField(null=True)  # 可管理的工程
+    domain = models.IntegerField(null=True)  # 可管理的工程细分
     class Meta:
         db_table = 'superUser'
 

@@ -61,6 +61,10 @@ def handlerEvent(xml_recv, toUserName, fromUserName):
         # 点击菜单事件
         eventKey = xml_recv.find("EventKey").text
         reply = handlerClick(toUserName, fromUserName, eventKey)
+    elif "VIEW" == eventType:
+        # 跳转事件
+        eventKey = xml_recv.find("EventKey").text
+        reply = handlerView(toUserName, fromUserName, eventKey)
     else:
         reply = "success"
     return reply
@@ -90,6 +94,16 @@ def handlerClick(toUserName, fromUserName, eventKey):
         return WxMessageUtil.reply_text_message(toUserName, fromUserName, "您好！这里是杭州华炳的简介")
     else:
         return "success"
+
+def handlerView(toUserName, fromUserName, eventKey):
+    """
+    若为跳转事件直接返回openid
+    :param toUserName:
+    :param fromUserName:
+    :param eventKey:
+    :return:
+    """
+    return "success"
 
 
 def handlerAccessToken():
