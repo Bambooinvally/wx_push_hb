@@ -9,13 +9,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from app.configutils import getconfig
-from app.models import WxUser, UnconfirmUser
+from app.models import WxUser, UnconfirmUser, get_or_none
 from app.wxHandler import dispatch_message
+from service.Template import TemplateContent, TemplateIdParams
 from service.wxconfig import WEBURL, APPID, SECTET, GET_OPENID_URL, GET_CODE
 from service.wxutils import WxMenuUtil, WxMessageUtil, get_access_token
 from urllib import parse
 
 from wx_push import specsetting
+from wx_push.specsetting import SUPERUSER_LOGIN_URL
 
 
 def recv_message(request):
@@ -54,7 +56,53 @@ def create_menu(request):
     :param request:
     :return:
     """
-    access_token = get_access_token()[0]  # getconfig("access_token", "")
+    access_token = getconfig("access_token", "")
+    menu = {
+        "button": [
+            {
+                "type": "click",
+                "name": "查看简介",
+                "key": "VIEW_PROFILE"
+            },
+            {
+                "name": "菜单",
+                "sub_button": [
+                    {
+                        "type": "view",
+                        "name": "绑定账号",
+                        "url": GET_CODE
+                    },
+                    {
+                        "type": "view",
+                        "name": "修改个人信息",
+                        "url": GET_CODE
+                    },
+                    # 小程序暂时不关联
+                    # {
+                    #     "type": "miniprogram",
+                    #     "name": "wxa",
+                    #     "url": "http://mp.weixin.qq.com",
+                    #     "appid": "wx286b93c14bbf93aa",
+                    #     "pagepath": "pages/lunar/index"
+                    # },
+                    {
+                        "type": "click",
+                        "name": "赞一下我们",
+                        "key": "V1001_GOOD"
+                    }]
+            }
+        ],
+    }
+    # print('in create menu access token is:'+str(access_token))
+    return HttpResponse(WxMenuUtil.create_menu(access_token, menu).decode())
+
+def create_superMenu(request):
+    """
+    创建菜单
+    :param request:
+    :return:
+    """
+    access_token = getconfig("access_token", "")
     menu = {
         "button": [
             {
@@ -76,22 +124,32 @@ def create_menu(request):
                         "url": GET_CODE
                     },
                     {
-                        "type": "miniprogram",
-                        "name": "wxa",
-                        "url": "http://mp.weixin.qq.com",
-                        "appid": "wx286b93c14bbf93aa",
-                        "pagepath": "pages/lunar/index"
+                        "type": "view",
+                        "name": "管理员登录",
+                        "url": SUPERUSER_LOGIN_URL
                     },
+                    # 小程序暂时不关联
+                    # {
+                    #     "type": "miniprogram",
+                    #     "name": "wxa",
+                    #     "url": "http://mp.weixin.qq.com",
+                    #     "appid": "wx286b93c14bbf93aa",
+                    #     "pagepath": "pages/lunar/index"
+                    # },
                     {
                         "type": "click",
                         "name": "赞一下我们",
                         "key": "V1001_GOOD"
                     }]
             }
-        ]
-    }
-    return HttpResponse(WxMenuUtil.create_menu(access_token, menu).decode())
 
+        ],
+        "matchrule": {
+            "tag_id": "101"
+        }
+    }
+    # print('in create menu access token is:'+str(access_token))
+    return HttpResponse(WxMenuUtil.create_addconditionalMenu(access_token, menu).decode())
 
 def del_menu(request):
     """
@@ -99,7 +157,7 @@ def del_menu(request):
     :param request:
     :return:
     """
-    access_token = access_token = get_access_token()[0]  # getconfig("access_token", "")
+    access_token = getconfig("access_token", "")
     return HttpResponse(WxMenuUtil.del_menu(access_token).decode())
 
 
@@ -142,6 +200,20 @@ def register(request):
 
 def verify(request):
     return HttpResponse('CoynMqa4m1dQm42K')
+
+
+def test(request):
+    access_token = getconfig('access_token','')
+    WxMessageUtil.send_message_by_openid(access_token=access_token,openId='o-XSVwRj5uPsuu4C3ckFLpsxqPsc',
+                                         templateId='0ZP2vzOjx3UpQgIMZYdHsR6SxGuZbGW2Tmtrv3RY5xw',miniPorgramParams=None,
+                                         template_data=TemplateContent(TemplateIdParams('xxx报警'),
+                                                                       TemplateIdParams('备注'),
+                                                                       TemplateIdParams('xxx电弧危险'),
+                                                                       TemplateIdParams('xxx小区xxx室'),
+                                                                       TemplateIdParams('123'),
+                                                                       TemplateIdParams('高'),
+                                                                       TemplateIdParams('2020年3月18日20:33')))
+    return HttpResponse('ok')
 
 
 """

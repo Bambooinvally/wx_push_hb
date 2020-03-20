@@ -75,7 +75,10 @@ def handlerSubscribe(createTime, eventType, toUserName):
     """
     if "subscribe" == eventType:
         defaults = {"subscribe_time": createTime, "subscribe": True}
-        WxUser.objects.get_or_create(openId=toUserName, defaults=defaults)
+        xuser,created = WxUser.objects.get_or_create(openId=toUserName, defaults=defaults)
+        if not created:
+            xuser.subscribe = True
+            xuser.save()
         return True
     else:
         WxUser.objects.filter(openId=toUserName).update(subscribe=False, subscribe_time=createTime)
@@ -96,7 +99,7 @@ def handlerAccessToken():
     """
     temp = get_access_token()
     accessToken = temp[0]
-    expireTime = temp[1]
+    expireTime = int(temp[1])-10
     nowStamp = int(time.time())
     if accessToken == "":
         print("error")

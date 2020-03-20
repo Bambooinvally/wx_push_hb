@@ -71,12 +71,12 @@
         $(document).ready(function () {
             $(".verify-remove").click(function () {
                 var openId = $(this).attr("data-openid");
-                postOpenid("/super/verify/user", openId, false);
+                postOpenid("/super/verify/user", openId, 0);
             });
 
             $(".verify-ok").click(function () {
                 var openId = $(this).attr("data-openid");
-                postOpenid("/super/verify/user", openId, true);
+                postOpenid("/super/verify/user", openId, 1);
             });
         });
 

@@ -84,20 +84,76 @@ class URLSource(models.Model):
         db_table = 'urlsource'
 
 
+class Project(models.Model):
+    """魔眼项目"""
+    source_id = models.IntegerField(primary_key=True)
+    projectname = models.CharField(max_length=255)  # 项目名称
+    province = models.CharField(max_length=100)  # 省
+    city = models.CharField(max_length=100)  # 市
+    district = models.CharField(max_length=100)  # 区
+    extraInfo = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        db_table = 'project'
+
+
+class Ammeters(models.Model):
+    """项目对应的各个设备"""
+    source = models.ForeignKey('Project',to_field='source_id',on_delete=models.CASCADE)
+    domain = models.CharField(max_length=100, default=0)  # 所属项目下的那个区域
+    ammeter_app_code = models.IntegerField()  # 对应项目下的设备编号
+    ammeter_addr = models.CharField(max_length=255)  # 安装地点
+
+    class Meta:
+        db_table = 'ammeters'
+
+
 class UnconfirmUser(models.Model):
+    openId = models.CharField("微信的openid", max_length=255)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
     phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
-    openId = models.CharField("微信的openid", max_length=255, primary_key=True)
-    
+
     # 需要添加的额外信息
-    createTime = models.BigIntegerField(null=True, default=int(datetime.datetime.now().timestamp()))
-    extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
+    createTime = models.DateTimeField(default=datetime.datetime.now())
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
-    source = models.CharField("源名", max_length=100, null=True, blank=True)  # URLSource中的desc
+    extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
+    ammeter = models.ManyToManyField('Ammeters')
     
     class Meta:
         db_table = 'unconfirmUser'
+
+
+class ConfirmedUser(models.Model):
+    openId = models.CharField("微信的openid", max_length=255)
+    name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
+    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
+    address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
+
+    # 需要添加的额外信息
+    createTime = models.DateTimeField(default=datetime.datetime.now())
+    IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
+    extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
+    ammeter = models.ManyToManyField('Ammeters')
+
+    class Meta:
+        db_table = 'confirmedUser'
+
+
+class SuperUser(models.Model):
+    openId = models.CharField("微信的openid", max_length=255)
+    name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
+    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
+    address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
+
+    # 需要添加的额外信息
+    createTime = models.DateTimeField(default=datetime.datetime.now())
+    IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
+    extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
+    ammeter = models.ManyToManyField('Ammeters')
+
+    class Meta:
+        db_table = 'superUser'
 
 
 def get_or_none(model, *args, **kwargs):

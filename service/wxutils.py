@@ -10,7 +10,6 @@ from service.wxconfig import TEMPLATEMAP
 
 #  'appid': 'wx179a6296f724d40f'
 
-
 def get_access_token():
     """
     获取token
@@ -27,7 +26,7 @@ def get_access_token():
 
 
 class News:
-    
+
     def __init__(self, title, desc, picurl, url):
         self.title = title
         self.desc = desc
@@ -71,7 +70,20 @@ class WxMenuUtil:
                            params={"access_token": access_token},
                            data=json.dumps(menu, ensure_ascii=False).encode('utf-8'))
         return re.content
-    
+
+    @staticmethod
+    def create_addconditionalMenu(access_token, menu):
+        """
+        创建菜单
+        :param access_token:
+        :param menu
+        :return:
+        """
+        re = requests.post("https://api.weixin.qq.com/cgi-bin/menu/addconditional",
+                           params={"access_token": access_token},
+                           data=json.dumps(menu, ensure_ascii=False).encode('utf-8'))
+        return re.content
+
     @staticmethod
     def del_menu(access_token):
         """
@@ -85,7 +97,7 @@ class WxMenuUtil:
 
 
 class WxMessageUtil:
-    
+
     @staticmethod
     def send_message_by_openid(access_token, openId, templateId, miniPorgramParams, template_data):
         """
@@ -101,18 +113,19 @@ class WxMessageUtil:
             miniPorgramParams = ""
         else:
             miniPorgramParams = miniPorgramParams.__dict__
-        re = requests.post("https://api.weixin.qq.com/cgi-bin/message/templates/send",
+        re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
                            params={"access_token": access_token},
                            data=json.dumps({
                                "touser": openId,
                                "template_id": templateId,
                                "url": "http://weixin.qq.com/download",
-                               "topcolor": "#FF0000",
-                               "miniprogram": miniPorgramParams,
+                               # "topcolor": "#FF0000",
+                               # "miniprogram": miniPorgramParams,
                                "data": template_data.__dict__
                            }))
+        print(re.content)
         return re.content
-    
+
     @staticmethod
     def __reply_message(toUser, fromUser, msgType, extr=""):
         """
@@ -130,7 +143,7 @@ class WxMessageUtil:
                         {4}
                     </xml>"""
         return message.format(toUser, fromUser, str(int(time.time())), msgType, extr)
-    
+
     @staticmethod
     def reply_text_message(toUser, fromUser, content):
         """
@@ -142,7 +155,7 @@ class WxMessageUtil:
         """
         text = "<Content><![CDATA[{}]]></Content>".format(content)
         return WxMessageUtil.__reply_message(toUser, fromUser, 'text', text)
-    
+
     @staticmethod
     def reply_img_message(toUser, fromUser, media_id):
         """
@@ -158,7 +171,7 @@ class WxMessageUtil:
         </Image>
         """.format(media_id)
         return WxMessageUtil.__reply_message(toUser, fromUser, 'image', img)
-    
+
     @staticmethod
     def reply_voice_message(toUser, fromUser, media_id):
         """
@@ -174,7 +187,7 @@ class WxMessageUtil:
             </Voice>
             """.format(media_id)
         return WxMessageUtil.__reply_message(toUser, fromUser, 'voice', voice)
-    
+
     @staticmethod
     def reply_video_message(toUser, fromUser, title, desc, media_id):
         """
@@ -194,7 +207,7 @@ class WxMessageUtil:
                 </Video>
                 """.format(media_id, title, desc)
         return WxMessageUtil.__reply_message(toUser, fromUser, 'video', video)
-    
+
     @staticmethod
     def reply_music_message(toUser, fromUser, title, desc, musicUrl, hqMusicUrl, media_id):
         """
@@ -218,7 +231,7 @@ class WxMessageUtil:
                     </Music>
                     """.format(title, desc, musicUrl, hqMusicUrl, media_id)
         return WxMessageUtil.__reply_message(toUser, fromUser, 'music', music)
-    
+
     @staticmethod
     def reply_text_img_message(toUser, fromUser, ArticleCount, *newsLst):
         """
@@ -251,6 +264,123 @@ class WxMessageUtil:
         return WxMessageUtil.__reply_message(toUser, fromUser, 'news', n)
 
 
+class WxUserTagUtil:
+    @staticmethod
+    def createTag(access_token, name):
+        """
+        创建用户标签
+        :param access_token:
+        :param name:标签名
+        :return:
+        """
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/create',
+                           params={'access_token': access_token},
+                           data=json.dumps({'tag': {'name': name}}))
+        return re.content
+
+    @staticmethod
+    def getTag(access_token):
+        """
+        获得用户标签
+        :param access_token:
+        :return:
+        """
+        # tags = []
+        re = requests.get(url='https://api.weixin.qq.com/cgi-bin/tags/get',
+                          params={'access_token': access_token})
+        tags = json.loads(re.content,encoding='utf-8')
+        return tags['tags']
+
+    @staticmethod
+    def deleteTag(access_token, tagId):
+        """
+        删除用户标签
+        :param access_token:
+        :param name:标签名
+        :return:
+        """
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/delete',
+                           params={'access_token': access_token},
+                           data=json.dumps({'tag': {'id': tagId}}))
+        return re.content
+
+    @staticmethod
+    def editTag(access_token, tagId, newName):
+        """
+        编辑用户标签
+        :param tagId:
+        :param newName:
+        :return:
+        """
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/update',
+                           params={'access_token': access_token},
+                           data=json.dumps({'tag': {'id': tagId,'name': newName}}))
+        return re.content
+
+    @staticmethod
+    def getUserByTag(access_token,tagId,next_openid=''):
+        """
+        获得标签下的用户
+        :param access_token:
+        :param tagId:
+        :param next_openid: 从哪个openid开始
+        :return:标签下人数，成员
+        """
+        # tags = []
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/user/tag/get',
+                          params={'access_token': access_token},
+                          data=json.dumps({'tagid': tagId,'next_openid': next_openid}))
+        result = json.loads(re.content, encoding='utf-8')
+        count = result['count']
+        members = result['data']['openid']
+        return count, members
+
+    @staticmethod
+    def setUserTag(access_token, openid_list, tagId):
+       """
+       批量为用户打标签
+       :param access_token: 
+       :param tagId: 
+       :param nopenid_list:
+       :return: 
+       """
+       re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging',
+                          params={'access_token': access_token},
+                          data=json.dumps({'openid_list': openid_list,
+                                           'tagid':tagId}))
+       return re.content
+
+    @staticmethod
+    def cancelUserTag(access_token, openid_list, tagId):
+        """
+        批量为用户取消标签
+        :param access_token:
+        :param tagId:
+        :param nopenid_list:
+        :return:
+        """
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging',
+                           params={'access_token': access_token},
+                           data=json.dumps({'openid_list': openid_list,
+                                            'tagid': tagId}))
+        return re.content
+
+    @staticmethod
+    def getUserTag(access_token, openid):
+        """
+        获取某用户标签
+        :param access_token:
+        :param tagId:
+        :param nopenid_list:
+        :return:用户标签，可能不止一个
+        """
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/getidlist',
+                           params={'access_token': access_token},
+                           data=json.dumps({'openid': openid}))
+        return json.loads(re.content)["tagid_list"]
+
+
 if __name__ == "__main__":
-    access_token = get_access_token()
-    print(access_token)
+    access_token = '31_ANeiyZWJqm2AhgBNm50GEC1ieHwrOdeugCc5uCW_0vFZrULGCYFBzAl6QUGopmIbfXHuVAc2P0Evt5q1aKl4MuiIONqHJueRDbHj7wNRkgRrQIPkpWHjnvmWaBkci26MICETdcAOGIZCQWUrEVFjAFANEO'
+    print(WxUserTagUtil.getTag(access_token))
+    print(WxUserTagUtil.getUserByTag(access_token,101))

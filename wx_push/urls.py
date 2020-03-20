@@ -22,10 +22,13 @@ urlpatterns = [
     # wx 使用
     url("^MP_verify_CoynMqa4m1dQm42K.txt$",aviews.verify),
     url("^wxrecv/", aviews.recv_message, name='wx-recv-message'),
-    url("^menu/create$", aviews.create_menu, name='wx-menu-create'),
+    url("^menu/create$", aviews.create_superMenu, name='wx-menu-create'),
     url("^menu/delete$", aviews.del_menu, name='wx-menu-delete'),
     url("^app/params$", aviews.getAppParams, name='wx-app-params'),
     url("^user/register$", aviews.register, name='wx-register'),
+
+    # 测试路径
+    url("^kylinz/test$",aviews.test, name='test'),
     
     
     # 管理员

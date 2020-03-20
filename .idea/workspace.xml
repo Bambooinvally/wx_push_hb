@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6fe8ee61-eeca-4aca-b1d6-3edb4f59f213" name="Default" comment="">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/app/management/commands/initdb.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/superuser/templates/userInfo.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -14,6 +15,12 @@
       <change beforePath="$PROJECT_DIR$/superuser/templates/verifyUser.html" beforeDir="false" afterPath="$PROJECT_DIR$/superuser/templates/verifyUser.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/superuser/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/superuser/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wx_push/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/wx_push/urls.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wx_push/specsetting.py" beforeDir="false" afterPath="$PROJECT_DIR$/wx_push/specsetting.py" afterDir="false" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,8 +37,135 @@
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
+<<<<<<< HEAD
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+=======
+  <component name="FUSProjectUsageTrigger">
+    <session id="-1039997093">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="15" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="15" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="py" value="48" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Python" value="48" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/management/commands/initdb.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/tests.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="89">
+              <caret line="56" column="31" selection-start-line="56" selection-start-column="31" selection-end-line="56" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/service/wxconfig.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="231">
+              <caret line="55" column="39" selection-start-line="55" selection-start-column="39" selection-end-line="55" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wx_push/specsetting.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="114">
+              <caret line="6" selection-start-line="6" selection-end-line="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/service/wxutils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="114">
+              <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="532">
+              <caret line="28" column="50" lean-forward="true" selection-start-line="27" selection-start-column="58" selection-end-line="28" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/service/Template.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="551">
+              <caret line="29" column="43" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wx_push/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="141">
+              <caret line="25" column="38" selection-start-line="25" selection-start-column="38" selection-end-line="25" selection-end-column="38" />
+              <folding>
+                <element signature="e#631#663#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/management/commands/bgtask.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="209">
+              <caret line="14" column="30" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -83,10 +217,12 @@
         <option value="$PROJECT_DIR$/app/template/register.html" />
         <option value="$PROJECT_DIR$/static/WeUI/weui-master/src/example/fragment/actionsheet.html" />
         <option value="$PROJECT_DIR$/app/templates/register.html" />
-        <option value="$PROJECT_DIR$/wx_push/specsetting.py" />
         <option value="$PROJECT_DIR$/service/wxconfig.py" />
         <option value="$PROJECT_DIR$/app/super_view.py" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/app/views.py" />
+=======
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
         <option value="$PROJECT_DIR$/wx_push/settings.py" />
         <option value="$PROJECT_DIR$/superuser/templates/achievements.html" />
         <option value="$PROJECT_DIR$/superuser/templates/modifyUser.html" />
@@ -101,6 +237,11 @@
         <option value="$PROJECT_DIR$/app/models.py" />
         <option value="$PROJECT_DIR$/superuser/templates/userInfo.html" />
         <option value="$PROJECT_DIR$/superuser/views.py" />
+<<<<<<< HEAD
+=======
+        <option value="$PROJECT_DIR$/wx_push/specsetting.py" />
+        <option value="$PROJECT_DIR$/app/views.py" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
       </list>
     </option>
   </component>
@@ -110,7 +251,16 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+<<<<<<< HEAD
   <component name="ProjectFrameBounds" extendedState="6">
+=======
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths>
+      <path value="$PROJECT_DIR$/static/weui/weui-master/package.json" />
+    </packageJsonPaths>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="7">
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
     <option name="x" value="294" />
     <option name="y" value="192" />
     <option name="width" value="1944" />
@@ -129,6 +279,24 @@
               <item name="wx_push" type="b2602c69:ProjectViewProjectNode" />
               <item name="wx_push" type="462c0819:PsiDirectoryNode" />
             </path>
+<<<<<<< HEAD
+=======
+            <path>
+              <item name="wx_push" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wx_push" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="wx_push" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wx_push" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="wx_push" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wx_push" type="462c0819:PsiDirectoryNode" />
+              <item name="wx_push" type="462c0819:PsiDirectoryNode" />
+            </path>
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
           </expand>
           <select />
         </subPane>
@@ -289,13 +457,29 @@
     <option name="totallyTimeSpent" value="7247000" />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <layout>
+=======
+    <frame x="-6" y="-6" width="1381" height="885" extended-state="7" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48961425" visible="true" weight="0.28117913" />
+      <window_info id="Structure" order="1" sideWeight="0.51038575" side_tool="true" weight="0.27728376" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32958803" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.36891386" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="10" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Run" order="2" weight="0.36891386" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.4588015" />
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48961425" visible="true" weight="0.27728376" />
@@ -309,6 +493,10 @@
       <window_info anchor="right" id="R Packages" order="5" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+=======
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.3492696" />
+      <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="R Graphics" order="3" />
@@ -323,6 +511,7 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/xml/etree/ElementTree.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons/builtins.py" />
     <entry file="file://$PROJECT_DIR$/manage.py">
@@ -332,6 +521,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/db/models/query.py" />
     <entry file="file://$USER_HOME$/.PyCharm2018.1/system/python_stubs/-1378733684/builtins.py" />
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/db/models/fields/related.py" />
@@ -352,6 +543,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/management/commands/refreshToken.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="161">
@@ -359,6 +551,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/template/backends/django.py" />
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/template/loader.py" />
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/shortcuts.py" />
@@ -372,20 +566,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/static/weui/weui-master/dist/example/example.css" />
     <entry file="file://$PROJECT_DIR$/static/weui/weui-master/dist/example/zepto.min.js" />
-    <entry file="file://$PROJECT_DIR$/service/Template.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="667">
-          <caret line="29" column="43" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/service/wxutils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="23" column="28" selection-start-line="22" selection-start-column="4" selection-end-line="24" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.en.md">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
@@ -393,6 +573,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/static/bootstrap/3.3.4/css/bootstrap.min.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="4" column="432" selection-start-line="4" selection-start-column="416" selection-end-line="4" selection-end-column="432" />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/README.en.md">
+=======
+    <entry file="file://$PROJECT_DIR$/wx_push/__init__.py">
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/service/wxconfig.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="783">
@@ -484,11 +683,44 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="736">
           <caret line="114" column="40" lean-forward="true" selection-start-line="114" selection-start-column="40" selection-end-line="114" selection-end-column="40" />
+=======
+    <entry file="file://$PROJECT_DIR$/static/css/1.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-299">
+          <caret line="14" column="27" lean-forward="true" selection-start-line="14" selection-start-column="27" selection-end-line="14" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/db/models/sql/query.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/db/models/query.py" />
+    <entry file="file://$PROJECT_DIR$/service/UrlService.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/contrib/auth/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/app/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="1" column="13" selection-start-line="1" selection-end-line="1" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/register.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="736">
+          <caret line="114" column="40" lean-forward="true" selection-start-line="114" selection-start-column="40" selection-end-line="114" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/contrib/auth/views.py" />
+    <entry file="file://$PROJECT_DIR$/wx_push/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="43" column="22" selection-start-line="43" selection-start-column="21" selection-end-line="43" selection-end-column="22" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/contrib/auth/views.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="115">
           <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
         </state>
@@ -533,11 +765,53 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="69">
           <caret line="3" column="12" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="12" />
+=======
+        <state relative-caret-position="-358">
+          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="3618" column="4" selection-start-line="3618" selection-start-column="4" selection-end-line="3618" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/superuser/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="30" column="46" selection-start-line="30" selection-start-column="40" selection-end-line="30" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/wxHandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="99" column="31" selection-start-line="99" selection-start-column="31" selection-end-line="99" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/core/serializers/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/superuser/templates/verifyUser.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="95" column="43" lean-forward="true" selection-start-line="95" selection-start-column="43" selection-end-line="95" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/shortcuts.py" />
+    <entry file="file://$PROJECT_DIR$/superuser/templates/searchUser.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="77" column="102" lean-forward="true" selection-start-line="77" selection-start-column="102" selection-end-line="77" selection-end-column="131" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/core/serializers/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="172">
           <caret line="122" column="4" selection-start-line="122" selection-start-column="4" selection-end-line="122" selection-end-column="4" />
         </state>
@@ -556,29 +830,101 @@
           <caret line="117" column="4" lean-forward="true" selection-start-line="117" selection-start-column="4" selection-end-line="118" selection-end-column="64" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
+=======
+        <state relative-caret-position="322">
+          <caret line="103" column="9" lean-forward="true" selection-start-line="103" selection-start-column="9" selection-end-line="103" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
           </folding>
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/shortcuts.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-38">
           <caret line="141" column="4" selection-start-line="141" selection-start-column="4" selection-end-line="141" selection-end-column="4" />
+=======
+    <entry file="file://$PROJECT_DIR$/superuser/templates/userInfo.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="47" column="102" selection-start-line="47" selection-start-column="102" selection-end-line="47" selection-end-column="102" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="70">
+          <caret line="9" column="68" selection-start-line="9" selection-start-column="43" selection-end-line="9" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/migrations/0001_initial.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/management/commands/pushService.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-872">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/management/commands/refreshToken.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/management/commands/bgtask.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="14" column="30" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/management/commands/initdb.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/tests.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="230">
+=======
+        <state relative-caret-position="532">
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
           <caret line="28" column="50" lean-forward="true" selection-start-line="27" selection-start-column="58" selection-end-line="28" selection-end-column="50" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
+<<<<<<< HEAD
+=======
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/service/Template.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="551">
+          <caret line="29" column="43" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wx_push/specsetting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/superuser/templates/searchUser.html">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="299">
           <caret line="77" column="102" lean-forward="true" selection-start-line="77" selection-start-column="102" selection-end-line="77" selection-end-column="131" />
         </state>
@@ -588,26 +934,49 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
           <caret line="103" column="9" lean-forward="true" selection-start-line="103" selection-start-column="9" selection-end-line="103" selection-end-column="9" />
+=======
+        <state relative-caret-position="141">
+          <caret line="25" column="38" selection-start-line="25" selection-start-column="38" selection-end-line="25" selection-end-column="38" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/superuser/templates/userInfo.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="47" column="102" selection-start-line="47" selection-start-column="102" selection-end-line="47" selection-end-column="102" />
+=======
+    <entry file="file://$PROJECT_DIR$/service/wxconfig.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="55" column="39" selection-start-line="55" selection-start-column="39" selection-end-line="55" selection-end-column="39" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wx_push/urls.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="231">
           <caret line="34" column="10" lean-forward="true" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="27" />
+=======
+        <state relative-caret-position="89">
+          <caret line="56" column="31" selection-start-line="56" selection-start-column="31" selection-end-line="56" selection-end-column="31" />
+>>>>>>> e08a13b115cb5e2164ec7b8b6f8eaab2c580c91e
           <folding>
             <element signature="e#631#663#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/service/wxutils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
         </state>
       </provider>
     </entry>

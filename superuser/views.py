@@ -128,8 +128,10 @@ def verify_user_info(request):
     """
     if request.method == "POST":
         openId = request.POST.get("openId", "")
-        verify = bool(request.POST.get("verify", "False"))
+        verify = True if request.POST.get("verify", 0) == 1 else False
         uusers = UnconfirmUser.objects.filter(openId=openId)
+        print(request.body)
+        print(openId,verify,uusers)
         if verify is False:
             uusers.delete()
             return HttpResponse(json.dumps(
