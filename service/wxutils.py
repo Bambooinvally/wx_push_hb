@@ -381,11 +381,11 @@ class WxUserTagUtil:
             tag = json.loads(re.content)["tagid_list"]
         except Exception as e:
             tag = ''
-            print('get tag error',e)
+            print('get tag error\n',re.content,e)
         return tag
 
 
 if __name__ == "__main__":
-    access_token = '31_ljS0q-Y5TjgatmrpNinHxvvL6-0OBOHeQN2wLzZ1ehQxjt5KMH_F-br-mK2K2gVI7a2HdL1kvK19tbEL45r6-xY481RXAl7LiVLXDY4XhB9Isf2Pz8oFhiYhKTBOcOy05d6_ZFVlrYXTKoZ0JMDiACAORI'
-    print(WxMenuUtil)
+    access_token = '31_T5CSFzX2bR_c8JUWpnJCnEwoEIp6dfRyYZrMdl890OJ3q9kiEZCCshcTXUydD3fk-6QQl_1M9vyg5w4jIqQyS0qzQaBEwYd5-LpOHFDmQ7KtQyuCnv8EYy3nurbqgAeGT5ol8Mu4hsjv0mHTFHTcAGANPB'
+    # print(WxMenuUtil)
     print(WxUserTagUtil.getUserByTag(access_token,101))

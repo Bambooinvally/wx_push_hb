@@ -109,7 +109,7 @@ class Ammeters(models.Model):
 
 
 class UnconfirmUser(models.Model):
-    openId = models.CharField("微信的openid", max_length=255)
+    openId = models.CharField("微信的openid", max_length=255,unique=True)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
     phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
@@ -125,7 +125,7 @@ class UnconfirmUser(models.Model):
 
 
 class ConfirmedUser(models.Model):
-    openId = models.CharField("微信的openid", max_length=255)
+    openId = models.CharField("微信的openid", max_length=255,unique=True)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
     phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
@@ -141,7 +141,7 @@ class ConfirmedUser(models.Model):
 
 
 class SuperUser(models.Model):
-    openId = models.CharField("微信的openid", max_length=255)
+    openId = models.CharField("微信的openid", max_length=255,unique=True)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
     phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
@@ -150,11 +150,20 @@ class SuperUser(models.Model):
     createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
-    source_id = models.IntegerField(null=True)  # 可管理的工程
-    domain = models.IntegerField(null=True)  # 可管理的工程细分
+    source_id = models.CharField(max_length=255,null=True)  # 可管理的工程
+    domain = models.CharField(max_length=255,null=True)  # 可管理的工程细分
     class Meta:
         db_table = 'superUser'
 
+class PushHistory(models.Model):
+    id = models.IntegerField(primary_key=True)
+    touser = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
+    massage = models.CharField(max_length=512)
+    pushtime = models.DateTimeField(auto_now=True)
+    type = models.CharField(max_length=100)
+    class Meta:
+        db_table = 'pushhistory'
 
 def get_or_none(model, *args, **kwargs):
     try:

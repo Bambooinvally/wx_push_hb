@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+
+    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <title>admin_login</title>
+    <style type="text/css">
+        .board {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            padding: 30px 30px 40px 40px;
+            height: 430px;
+            overflow: auto;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        body {
+            background: {#url(/static/images/background.jpg)#} no-repeat;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page__bd" id="checking">
+        <div class="weui-loadmore">
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在校验</span>
+        </div>
+        <div class="weui-loadmore weui-loadmore_line weui-loadmore_dot">
+            <span class="weui-loadmore__tips"></span>
+        </div>
+    </div>
+
+     <div class="weui-msg hidden" id="failed" >
+        <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+        <div class="weui-msg__text-area">
+            <h2 class="weui-msg__title">操作失败</h2>
+            <p class="weui-msg__desc" id="failed_text">您没有管理员权限</p>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    //前端获取code，返回给后端获得openid
+    $(function () {
+        var code = getQueryString("code");
+        if (code != null) {
+            $.ajax({
+                url: '/app/params',
+                type: 'post',
+                dataType: 'json',
+                //sync: true,
+                data: {'code' : code},
+                success: function (res) {
+                        {#$('#open_id').val(res.openid);#}
+                        {#console.log(res);#}
+                    sendOpenId(res.openid)
+                }
+
+            })
+        } else {
+            $('#checking').addClass('hidden')
+            $('#failed').removeClass('hidden')
+            $('#failed_text').html('请使用微信打开')
+        }
+    })
+
+    function sendOpenId(openid) {
+        $.ajax({
+            url: '/login',
+            type: 'post',
+            dataType: 'json',
+            //sync: true,
+            data: {'openid':openid},
+            success: function (data) {
+                console.log(openid);
+                if (data.status == 'success')
+                    window.location = '/super/verify/user'
+                else{
+                    $('#checking').addClass('hidden')
+                    $('#failed').removeClass('hidden')
+                }
+
+            }
+        })
+
+    }
+</script>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block verify %} active {% endblock %}
+{% block show %} active {% endblock %}
 {% load staticfiles %}
 
 {% block extlib %}
@@ -9,7 +9,7 @@
 {% block content %}
     <div class="page-header">
         <h1>
-            <strong>待审核用户列表</strong>
+            <strong>{{ perojectName }}用户列表</strong>
         </h1>
     </div>
 
@@ -19,41 +19,41 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                     <div id="listContain" class="list-group">
-                        {% for uuser in uncofirmUsers %}
+                        {% for user in confirmedUsers %}
                             <div class="list-group-item">
                                 <div class="list-group-item-heading row">
                                     <div class="col-md-2">
-                                        <label>{{ uuser.name }}</label>
+                                        <label>{{ user.name }}</label>
                                     </div>
                                 </div>
                                 <div class="list-group-item-text">
                                     <div class="row">
                                         <div class="col-md-5">
-                                            <p>手机号：{{ uuser.phone }}</p>
+                                            <p>手机号：{{ user.phone }}</p>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-10">
-                                            <p>绑定设备：{% for data in uuser.ammeter.values %}
+                                            <p>绑定设备：{% for data in user.ammeter.values %}
                                                 {{ data.ammeter_addr }}(设备号{{ data.ammeter_app_code }}) </p>
                                                 {% endfor %}
                                         </div>
-                                        <input type="hidden" value="{{ uuser.openId }}"/>
+                                        <input type="hidden" value="{{ user.openId }}"/>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-3">
                                             <p>
-                                                <button data-openid="{{ uuser.openId }}"
-                                                        class="verify-ok btn btn-success">
-                                                    <span class="glyphicon glyphicon-ok"> 通过</span>
+                                                <button data-openid="{{ user.openId }}"
+                                                        class="verify-ok btn btn-warning">
+                                                    <span class="glyphicon glyphicon-edit"> 修改</span>
                                                 </button>
                                             </p>
                                         </div>
                                         <div class="col-md-3 col-md-offset-6">
                                             <p>
-                                                <button data-openid="{{ uuser.openId }}"
-                                                        class="verify-remove btn btn-danger">
-                                                    <span class="glyphicon glyphicon-remove"> 不通过</span>
+                                                <button data-openid="{{ user.openId }}"
+                                                        class="verify-remove btn btn-success">
+                                                    <span class="glyphicon glyphicon-remove"> 确认</span>
                                                 </button>
                                             </p>
                                         </div>

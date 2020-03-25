@@ -6,10 +6,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     {% load staticfiles %}
 
-    {#    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet">#}
+        <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet">
 
     <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
+{#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
+{#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
     <title>WeUI</title>
     <style type="text/css">
         .board {
@@ -59,14 +64,32 @@
                                            pattern="[0-9]*">
                                 </div>
                             </div>
-                            <div class="weui-cell">
-                                <div class="weui-cell__hd"><label class="weui-label">地址</label></div>
-                                <div class="weui-cell__bd">
-                                    <input id="addr" class="ipt weui-input" placeholder="填写绑定的地址" type="text">
-                                </div>
+
+                            <div class="page">
+
+{#                            <div class="weui-cell">#}
+{#                                <div class="weui-cell__hd"><label class="weui-label">地址</label></div>#}
+{#                                <div class="weui-cell__bd">#}
+{#                                    <input id="addr" class="ipt weui-input" placeholder="填写绑定的地址" type="text">#}
+{#                                </div>#}
+{#                            </div>#}
+                            <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd"><label class="weui-label">安装地区</label></div>
+                                <div class="weui-cell__bd" id="showPicker">请点击选择</div>
                             </div>
+                            <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after hidden">
+                                <div class="weui-cell__hd"><label class="weui-label">绑定设备</label></div>
+                                <div class="weui-cell__bd " id="showDevice">请点击选择</div>
+                            </div>
+
                             <div class="weui-cell__bd">
                                 <input id="open_id"  class="weui-input" type="hidden" value="">
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input id="source_id"  class="weui-input" type="hidden" value="">
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input id="board_id"  class="weui-input" type="hidden" value="">
                             </div>
                             <br>
                             <br>
@@ -91,6 +114,7 @@
         <div class="page__ft"></div>
     </div>
 </div>
+</div>
 
 <script type="text/javascript" class="form_page js_show">
     $(function () {
@@ -98,7 +122,7 @@
         var $input = $('.ipt');
         $input.on('input', function () {
             if ($input.val()) {
-                $('#showTooltips').removeClass('weui-btn_disabled');
+                //$('#showTooltips').removeClass('weui-btn_disabled');
             } else {
                 $('#showTooltips').addClass('weui-btn_disabled');
             }
@@ -110,12 +134,15 @@
                 $.ajax({
                     url: '/user/register',
                     type: 'post',
+                    dataType:'json',
                     data: { 'name': $('#name').val(),
                             'phone': $('#phone').val(),
                             'address': $('#addr').val(),
-                            'openId': $('#open_id').val()},
+                            'openId': $('#open_id').val(),
+                            'source_id':$('#source_id').val(),
+                            'board_id':$('#board_id').val()},
                     success: function (res) {
-                        alert('ok')
+                        alert(res.statue)
                     }
                 })
             }
@@ -129,6 +156,7 @@
     });
 </script>
 <script>
+    var ammeters=[];
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
@@ -156,6 +184,89 @@
         }
     })
 
+
+    $('#showPicker').on('click', function () {
+    var lst = [
+    {% for provinces in data %}
+    {% for province,cities in provinces.items%}
+    {
+	        label: '{{ province }}',
+	        value: '{{ province }}',
+	        children: [
+            {% for city,projects in cities.items %}
+            {
+	            label: '{{ city }}',
+	            value: '{{ city }}',
+
+	            children: [
+                 {% for project in projects|first %}
+                 {% for k,v in project.items %}
+                {
+	                label: '{{ v }}',
+	                value: {{ k }}
+	            },
+                    {% endfor %}
+                {% endfor %}
+                ]
+	        },
+            {% endfor %}
+            ]
+    },
+        {% endfor %}
+{% endfor %}
+    ];
+
+    weui.picker(lst, {
+	        depth: 3,
+	        defaultValue: [0, 1, 1],
+	        onChange: function onChange(result) {
+	            console.log(result);
+	        },
+	        onConfirm: function onConfirm(result) {
+	            //alert(result)
+	            $('#showPicker').html(result[2].label);
+                $('#source_id').val(result[2].value);
+                selectAmmeter(result[2].value)
+	        },
+	        id: 'cascadePicker',
+	        title: '选择安装地点'
+	    });
+});
+    
+    function selectAmmeter(source_id) {
+        $.ajax({
+            url: '/get/ammeters',
+            type: 'post',
+            dataType:'json',
+            data: { 'source_id': source_id},
+            success: function (data) {
+                for (var i=0;i<data.length;i++)
+                {
+                    var temp = {label:data[i].addr,
+                            value:data[i].ammeter_app_code}
+                    ammeters.push(temp)
+                }
+                $('#showDevice').parent().removeClass('hidden');
+            }
+        })
+    }
+
+    $('#showDevice').on('click', function () {
+        weui.picker(ammeters, {
+            onChange: function (result) {
+                console.log(result);
+            },
+            onConfirm: function (result) {
+                //console.log(result);
+                $('#showDevice').html(result[0].label)
+                $('#board_id').val(result[0].value)
+                $('#showTooltips').removeClass('weui-btn_disabled');
+            },
+            title: '选择设备'
+        });
+    });
 </script>
 </body>
 </html>
+
+

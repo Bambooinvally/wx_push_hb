@@ -122,7 +122,7 @@ def handlerAccessToken():
     return expireTime
 
 
-def handlerSendWarningMessage(msg):
+def handlerSendWarningMessage(msg, user=''):
     """
     处理获取的报警信息，转为微信下发数据
     :param WarnMessage:
@@ -131,10 +131,10 @@ def handlerSendWarningMessage(msg):
     type = msg["type"]
     if type == "POWER":
         tip = "功率过大报警"
-        deviceName = msg['location'] + "魔眼设备"
+        deviceName = msg['location'] + "设备"
         tipMore = "报警功率为" + str(msg["value"])
         level = "三级"
-        warntime = datetime.datetime.fromtimestamp(int(msg["time"])).strftime("%Y-%m-%d %H:%M:%S")
+        warntime = msg["time"]
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "REMAIN_CUR":
         tip = "剩余电流危险报警"
@@ -145,10 +145,10 @@ def handlerSendWarningMessage(msg):
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "ARC":
         tip = "故障电弧危险报警"
-        deviceName = msg['location'] + "魔眼设备"
+        deviceName = msg['location'] + "设备"
         tipMore = "正常" if msg["value"] else "异常"
         level = "三级"
-        warntime = datetime.datetime.fromtimestamp(int(msg["time"])).strftime("%Y-%m-%d %H:%M:%S")
+        warntime = msg["time"]
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "SMOKE":
         tip = "烟雾报警"
@@ -158,13 +158,19 @@ def handlerSendWarningMessage(msg):
         warntime = datetime.datetime.fromtimestamp(int(msg["time"])).strftime("%Y-%m-%d %H:%M:%S")
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "APP":
-        tip = "用电器长时间接入报警"
-        deviceName = msg['location'] + "魔眼设备"
-        tipMore = msg['valueAttach'] + "已接入" + \
-                  str(int((time.time() - int(msg["time"])) / 60)) + "分钟"
-        level = "三级"
-        warntime = datetime.datetime.fromtimestamp(int(msg["time"])).strftime("%Y-%m-%d %H:%M:%S")
-        return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
+        # tip = "用电器长时间接入报警"
+        # deviceName = msg['location'] + "魔眼设备"
+        # tipMore = msg['valueAttach'] + "已接入" + \
+        #           str(int((time.time() - int(msg["time"])) / 60)) + "分钟"
+        # level = "三级"
+        # warntime = datetime.datetime.fromtimestamp(int(msg["time"])).strftime("%Y-%m-%d %H:%M:%S")
+        tip = "违规电器["+msg['value']+"]接入报警"
+        deviceName = msg['location'] + "设备"
+        tipMore = "用电器功率："+msg['valueAttach'] + 'W'
+        level = "一级"
+        warntime = msg['time']
+        other = '用户：'+user.name + ' 联系方式：' + user.phone
+        return createSendWarningMsg(tip, deviceName, tipMore, level, warntime,other)
     elif type == "LINE_TEMP":
         tip = "线温报警危险"
         deviceName = msg['location'] + "魔眼设备"
@@ -174,9 +180,9 @@ def handlerSendWarningMessage(msg):
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
 
 
-def createSendWarningMsg(tip, deviceName, tipMore, level, warntime):
+def createSendWarningMsg(tip, deviceName, tipMore, level, warntime, other=''):
     first = TemplateIdParams("设备报警")
-    remark = TemplateIdParams("查看详细信息")
+    remark = TemplateIdParams(other)
     keywordArgs = [
         TemplateIdParams(tip),
         TemplateIdParams(deviceName),

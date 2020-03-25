@@ -1,8 +1,9 @@
 import datetime
 import json
 import random
+from functools import wraps
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login
 from django.core import serializers
@@ -10,12 +11,15 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, render_to_response, get_object_or_404
 
-from app.configutils import getconfig
+from app.configutils import getconfig, Ammeters, ConfirmedUser, Project
 from service.wxutils import WxUserTagUtil
 # Create your views here.
 from django.contrib.auth import logout, authenticate
 
 from app.models import UnconfirmUser, WxUser, get_or_none, SuperUser
+from superuser.permissionUtils import getAdminPermission, admin_required, adminCheck
+from wx_push.specsetting import ADMIN_TAG
+
 
 
 class PasswordError(Exception):
@@ -73,23 +77,28 @@ class LoginBackend(object):
 #     else:
 #         return HttpResponse("gundan")
 
-def my_login(request):
+def wx_login(request):
     """
     使用微信的openid进行管理员认证
     :param request:
     :return:
     """
-    code = request.GET.get('code',-1)
-    openId = request.POST.get('openId','')
-    local_check = get_or_none(SuperUser,openId=openId)
-    tag_check = WxUserTagUtil.getUserTag(getconfig("access_token", ""),openId)
-    print(code,request.body,openId,local_check,tag_check)
+    if request.method == 'GET':
+        return render_to_response('wxlogin.html')
+    elif request.method == 'POST':
+        openId = request.POST.get('openid','')
+        if adminCheck(openId):
+            result = {'status':'success'}
+            request.session['openid'] = openId
+        else:
+            result = {'status': 'failed'}
+        return HttpResponse(json.dumps(result, ensure_ascii=True), content_type='text/json; charset=utf-8')
 
 
-@login_required()
+@admin_required
 def my_logout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('login'))
+    request.session.clear()
+    return HttpResponse('本次登录已注销')
 
 
 """
@@ -98,8 +107,8 @@ def my_logout(request):
     2.2 管理员审核的注册信息（同意就开通用户推送）
 """
 
-
-def modefy_user_info(request):
+@admin_required
+def modify_user_info(request):
     pk = int(request.GET.get("pk", "-1"))
     if request.method == "POST":
         if pk < 0:
@@ -119,56 +128,83 @@ def modefy_user_info(request):
         user = get_object_or_404(WxUser, pk=pk)
         return render_to_response("userInfo.html", {"user": user, "request": request})
 
-
+@admin_required
 def search_user(request):
     if request.method == "POST":
         qdata = request.POST.get("qdata", "")
         qtype = request.POST.get("qtype", "")
         users = []
         if qtype == "name":
-            users = WxUser.objects.filter(name__startswith=qdata)
+            users = ConfirmedUser.objects.filter(name__startswith=qdata)
         elif qtype == "phone":
-            users = WxUser.objects.filter(phone__startswith=qdata)
+            users = ConfirmedUser.objects.filter(phone__startswith=qdata)
         if len(users) > 0:
             return render_to_response("searchUser.html", {"users": users, "request": request})
     return render_to_response("searchUser.html", {"request": request})
 
 
+@admin_required
 def verify_user_info(request):
     """
-    未加入权限
+    已加入权限
     :param request:
     :return:
     """
     if request.method == "POST":
         openId = request.POST.get("openId", "")
-        verify = True if request.POST.get("verify", 0) == 1 else False
+        verify = True if request.POST.get("verify", -1) == '1' else False
         uusers = UnconfirmUser.objects.filter(openId=openId)
-        print(request.body)
-        print(openId,verify,uusers)
         if verify is False:
             uusers.delete()
+            # print('delte user')
             return HttpResponse(json.dumps(
                 {"data": serializers.serialize('json', UnconfirmUser.objects.all()), "state": True, "msg": "ok"}),
                 content_type="json/html; charset=UTF-8")
         if len(uusers) == 1:
             uuser = uusers.first()
-            wxuser = get_or_none(WxUser, {"openId": uuser.openId})
+            # print(uuser.ammeter.values())
+            wxuser = get_or_none(ConfirmedUser, openId=uuser.openId)
+            # print(wxuser)
             if wxuser is None:
-                defult = {"phone": uuser.phone,
-                          "name": uuser.name, "subscribe_time": -1, "subscribe": False}
-                WxUser.objects.create(openId=openId, defult=defult)
+                try:
+                    wxuser = ConfirmedUser.objects.create(openId=uuser.openId,name=uuser.name,phone=uuser.phone,
+                                                 address=uuser.address,IDcard=uuser.IDcard,extraInfo=uuser.extraInfo)
+                    for amt in uuser.ammeter.all():
+                        wxuser.ammeter.add(amt)
+                    uuser.delete()
+                except Exception as e:
+                    print(e)
             else:
                 wxuser.phone = uuser.phone
                 wxuser.name = uuser.name
                 wxuser.IDcard = uuser.IDcard
+                wxuser.address = uuser.address
+                wxuser.ammeter.clear()
+                for amt in uuser.ammeter.all():
+                    wxuser.ammeter.add(amt)
                 wxuser.save()
+                uuser.delete()
             return HttpResponse(json.dumps(
                 {"data": serializers.serialize('json', UnconfirmUser.objects.all()), "state": True, "msg": "ok"}),
                 content_type="json/html; charset=UTF-8")
         else:
             return HttpResponse(json.dumps({"msg": "无此用户", "state": False}),
                                 content_type="json/html; charset=UTF-8")
+
+    #  获取页面
     else:
-        uncofirmUsers = UnconfirmUser.objects.all()
+        source_permit, domain_permit = getAdminPermission(request)
+        uncofirmUsers = UnconfirmUser.objects.filter(ammeter__source__in=source_permit,ammeter__domain__in=domain_permit)
         return render_to_response("verifyUser.html", {"uncofirmUsers": uncofirmUsers})
+
+
+@admin_required
+def confirmed_user_info(request):
+    """已通过审核的用户"""
+    source_permit, domain_permit = getAdminPermission(request)
+    confirmedUsers = ConfirmedUser.objects.filter(ammeter__source__in=source_permit,ammeter__domain__in=domain_permit)
+    projectName = ''
+    if len(source_permit) == 1:
+        projectName = Project.objects.get(source_id=source_permit[0]).projectname
+    return render_to_response("showUser.html", {"confirmedUsers": confirmedUsers,
+                                   "perojectName": projectName})

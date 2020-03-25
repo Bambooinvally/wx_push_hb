@@ -13,6 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+import os, django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+
+django.setup()
 from django.conf.urls import url
 import app.views as aviews
 import superuser.views as suview
@@ -22,10 +28,11 @@ urlpatterns = [
     # wx 使用
     url("^MP_verify_CoynMqa4m1dQm42K.txt$",aviews.verify),
     url("^wxrecv/", aviews.recv_message, name='wx-recv-message'),
-    url("^menu/create$", aviews.create_superMenu, name='wx-menu-create'),
+    url("^menu/create$", aviews.create_menu, name='wx-menu-create'),
     url("^menu/delete$", aviews.del_menu, name='wx-menu-delete'),
     url("^app/params$", aviews.getAppParams, name='wx-app-params'),
     url("^user/register$", aviews.register, name='wx-register'),
+    url("^get/ammeters$", aviews.getAmmeters, name='get-ammeter'),
 
     # 测试路径
     url("^kylinz/test$",aviews.test, name='test'),
@@ -34,9 +41,10 @@ urlpatterns = [
     # 管理员
     
     url("^logout", suview.my_logout, name='my_logout'),
-    url("^login", suview.my_login, name='my_login'),
-    url("^super/modify/user", suview.modefy_user_info, name='modify-user'),
+    url("^login", suview.wx_login, name='wx_login'),
+    url("^super/modify/user", suview.modify_user_info, name='modify-user'),
     url("^super/verify/user", suview.verify_user_info, name='verify-user'),
     url("^super/search/user", suview.search_user, name='search-user'),
+    url("^super/show/user",suview.confirmed_user_info, name='show-user')
 
 ]

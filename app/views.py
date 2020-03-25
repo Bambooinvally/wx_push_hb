@@ -8,8 +8,8 @@ import requests
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-from app.configutils import getconfig
-from app.models import WxUser, UnconfirmUser, get_or_none
+from app.configutils import getconfig, Project
+from app.models import WxUser, UnconfirmUser, get_or_none, Ammeters
 from app.wxHandler import dispatch_message
 from service.Template import TemplateContent, TemplateIdParams
 from service.wxconfig import WEBURL, APPID, SECTET, GET_OPENID_URL, GET_CODE, SUPERUSER_LOGIN
@@ -72,11 +72,11 @@ def create_menu(request):
                         "name": "绑定账号",
                         "url": GET_CODE
                     },
-                    {
-                        "type": "view",
-                        "name": "修改个人信息",
-                        "url": GET_CODE
-                    },
+                    # {
+                    #     "type": "view",
+                    #     "name": "修改个人信息",
+                    #     "url": GET_CODE
+                    # },
                     # 小程序暂时不关联
                     # {
                     #     "type": "miniprogram",
@@ -189,15 +189,56 @@ def register(request):
         phone = request.POST.get("phone")
         address = request.POST.get("address")
         openId = request.POST.get("openId")
-        print(name + phone + address + openId)
-        obj, iscreate = UnconfirmUser.objects.get_or_create(phone=phone, openId=openId,
-                                                            defaults={"name": name, "phone": phone, "address": address,
-                                                                      "openId": openId})
-        print(iscreate)
-        return HttpResponse('信息录入成功！')
-    else:
-        return render_to_response('register.html')
+        source_id = request.POST.get('source_id')
+        ammeter_app_code = request.POST.get('board_id')
+        statue = '请使用微信打开'
+        if openId and name and phone:
+            obj, iscreate = UnconfirmUser.objects.get_or_create(openId=openId,
+                                                                defaults={"name": name, "phone": phone, "address": address,
+                                                                          "openId": openId})
+            if iscreate:
+                obj.ammeter.add(Ammeters.objects.get(source_id=source_id, ammeter_app_code=ammeter_app_code))
+                statue = '提交成功，请等待管理员审核'
+            else:
+                statue = '您已提交过绑定申请，无需再次提交'
 
+        return HttpResponse(json.dumps({'statue':statue}),
+                                content_type="json/html; charset=UTF-8")
+    else:
+        projects = Project.objects.all()
+        data = []
+        province_city={}
+
+        provinces =  [x['province'] for x in projects.values('province').distinct()]
+        projectName = [x['projectname'] for x in projects.values('projectname')]
+        source_id = [x['source_id'] for x in projects.values('source_id')]
+        for province in provinces:
+            # 获取省下面的市
+            province_city[province] = {x['city']:None for x in projects.filter(province=province).values('city')}
+            # print(province_city)
+            for city in province_city[province].keys():
+                city_projects = [{x['source_id']:x['projectname']} for x in projects.filter(province=province,city=city).values('source_id','projectname')]
+                if province_city[province][city] is None:
+                    province_city[province][city] = []
+                province_city[province][city].append(city_projects)
+            data.append({province:province_city[province]})
+
+        return render_to_response('register.html',{'data':data})
+
+
+def getAmmeters(request):
+    source_id = request.POST.get('source_id')
+    ammeters = Ammeters.objects.filter(source_id = source_id)
+    data = []
+    for ammeter in ammeters:
+        message = {
+            'addr':ammeter.ammeter_addr,
+            'ammeter_app_code':ammeter.ammeter_app_code,
+            'domain':ammeter.domain
+        }
+        data.append(message)
+    # print(source_id,data)
+    return HttpResponse(json.dumps(data),content_type="json/html; charset=UTF-8")
 
 def verify(request):
     return HttpResponse('CoynMqa4m1dQm42K')
