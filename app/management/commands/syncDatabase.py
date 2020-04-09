@@ -15,9 +15,9 @@ from service.wxutils import WxMessageUtil
 logger = logging.getLogger(__name__)
 
 def syncbd():
-    url = 'http://127.0.0.1:8000/api/ammeterlist.json'
+    url = 'http://tzdpc.piercingeyes.cn/api/ammeterlist.json'
     re = requests.get(url)
-    data = json.loads(re.content)
+    data = json.loads(re.content.decode('utf-8'))
     device_cnt=0
     all_device = 0
     try:
@@ -47,9 +47,10 @@ def syncbd():
             "ammeter_addr": ammeter['location'] if ammeter['location'] is not None else '--',
             "domain": ammeter['ammeter_distination']  # 原来的单元号，电瓶车项目的板子号
         }
-        amt,isnew=Ammeters.objects.get_or_create(source_id=source_id,ammeter_app_code=ammeter['ammeter_app_code'],defaults=default)
+        amt,isnew=Ammeters.objects.update_or_create(source_id=source_id,ammeter_app_code=ammeter['ammeter_app_code'],defaults=default)
         if isnew:
             device_cnt += 1
+
     print('设备总数：',all_device,'成功导入：',device_cnt)
 
 class Command(BaseCommand):

@@ -91,7 +91,7 @@ def handlerSubscribe(createTime, eventType, toUserName):
 
 def handlerClick(toUserName, fromUserName, eventKey):
     if eventKey == "VIEW_PROFILE":
-        return WxMessageUtil.reply_text_message(toUserName, fromUserName, "您好！这里是杭州华炳的简介")
+        return WxMessageUtil.reply_text_message(toUserName, fromUserName, "牟眼行为智慧用电系统，为您的用电安全保驾护航！")
     else:
         return "success"
 
@@ -113,7 +113,7 @@ def handlerAccessToken():
     """
     temp = get_access_token()
     accessToken = temp[0]
-    expireTime = int(temp[1])-10
+    expireTime = int(temp[1])-300
     nowStamp = int(time.time())
     if accessToken == "":
         print("error")
@@ -122,7 +122,7 @@ def handlerAccessToken():
     return expireTime
 
 
-def handlerSendWarningMessage(msg, user=''):
+def handlerSendWarningMessage(msg, user=None):
     """
     处理获取的报警信息，转为微信下发数据
     :param WarnMessage:
@@ -135,6 +135,12 @@ def handlerSendWarningMessage(msg, user=''):
         tipMore = "报警功率为" + str(msg["value"])
         level = "三级"
         warntime = msg["time"]
+        name = '--'
+        phone = '--'
+        if user is not None:
+            name = user.name
+            phone = user.phone
+        other = '用户：' + str(name) + ' 联系方式：' + str(phone) + '\n点击可导航至报警地点'
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "REMAIN_CUR":
         tip = "剩余电流危险报警"
@@ -146,9 +152,15 @@ def handlerSendWarningMessage(msg, user=''):
     elif type == "ARC":
         tip = "故障电弧危险报警"
         deviceName = msg['location'] + "设备"
-        tipMore = "正常" if msg["value"] else "异常"
-        level = "三级"
+        tipMore = '电弧异常！' # + str(msg["value"]) + '次每三十秒'
+        level = "--"
         warntime = msg["time"]
+        name = '--'
+        phone = '--'
+        if user is not None:
+            name = user.name
+            phone = user.phone
+        other = '用户：' + str(name) + ' 联系方式：' + str(phone) + '\n点击可导航至报警地点'
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "SMOKE":
         tip = "烟雾报警"
@@ -169,7 +181,12 @@ def handlerSendWarningMessage(msg, user=''):
         tipMore = "用电器功率："+msg['valueAttach'] + 'W'
         level = "一级"
         warntime = msg['time']
-        other = '用户：'+user.name + ' 联系方式：' + user.phone
+        name = '--'
+        phone = '--'
+        if user is not None:
+            name = user.name
+            phone = user.phone
+        other = '用户：'+str(name) + ' 联系方式：' + str(phone) + '\n点击可导航至报警地点'
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime,other)
     elif type == "LINE_TEMP":
         tip = "线温报警危险"

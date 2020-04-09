@@ -103,7 +103,7 @@ class Ammeters(models.Model):
     domain = models.CharField(max_length=100, default=0)  # 所属项目下的那个区域
     ammeter_app_code = models.IntegerField()  # 对应项目下的设备编号
     ammeter_addr = models.CharField(max_length=255)  # 安装地点
-
+    coordinate = models.CharField(max_length=100)
     class Meta:
         db_table = 'ammeters'
 

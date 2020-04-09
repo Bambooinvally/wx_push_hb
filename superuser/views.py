@@ -21,11 +21,10 @@ from superuser.permissionUtils import getAdminPermission, admin_required, adminC
 from wx_push.specsetting import ADMIN_TAG
 
 
-
 class PasswordError(Exception):
     def __init__(self, value):
         self.value = value
-    
+
     def __str__(self):
         return repr(self.value)
 
@@ -37,7 +36,7 @@ class LoginBackend(object):
             return user
         else:
             raise PasswordError('密码错误')
-    
+
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
@@ -45,37 +44,38 @@ class LoginBackend(object):
             return None
 
 
-# def my_login(request):
-#     if request.method == 'GET':
-#         vrf = random.uniform(10, 20)
-#         pagedatas = {
-#             'request': request,
-#             'vrf': vrf
-#         }
-#         request.session['vrf'] = vrf
-#         # print(vrf)
-#         return render_to_response('login.html', pagedatas)
-#     elif request.method == 'POST':
-#         username = request.POST.get('username', '')
-#         password = request.POST.get('password', '')
-#         vrf = request.POST.get('vrf', '')
-#         if str(request.session['vrf']) != vrf:
-#             return HttpResponse("gundanba")
-#         try:
-#             user = authenticate(username=username, password=password)
-#         except PasswordError:
-#             return HttpResponseRedirect(reverse('my_login') + '?err=true&msg=密码不正确!')
-#         except User.DoesNotExist:
-#             return HttpResponseRedirect(reverse('my_login') + '?err=true&msg=账号不存在!')
-#         else:
-#             request.session['username'] = username
-#             login(request, user)
-#             if user.is_superuser:
-#                 return HttpResponseRedirect(reverse('verify-user'))
-#             else:
-#                 return HttpResponseRedirect(reverse('my_login'))
-#     else:
-#         return HttpResponse("gundan")
+def my_login(request):
+    if request.method == 'GET':
+        vrf = random.uniform(10, 20)
+        pagedatas = {
+            'request': request,
+            'vrf': vrf
+        }
+        request.session['vrf'] = vrf
+        # print(vrf)
+        return render_to_response('login.html', pagedatas)
+    elif request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        vrf = request.POST.get('vrf', '')
+        if str(request.session['vrf']) != vrf:
+            return HttpResponse("gundanba")
+        try:
+            user = authenticate(username=username, password=password)
+        except PasswordError:
+            return HttpResponseRedirect(reverse('manage-login') + '?err=true&msg=密码不正确!')
+        except User.DoesNotExist:
+            return HttpResponseRedirect(reverse('manage-login') + '?err=true&msg=账号不存在!')
+        else:
+            request.session['username'] = username
+            login(request, user)
+            if user.is_superuser:
+                return HttpResponseRedirect(reverse('permission-assign'))
+            else:
+                return HttpResponse('没有权限')
+    else:
+        return HttpResponse("gundan")
+
 
 def wx_login(request):
     """
@@ -86,9 +86,9 @@ def wx_login(request):
     if request.method == 'GET':
         return render_to_response('wxlogin.html')
     elif request.method == 'POST':
-        openId = request.POST.get('openid','')
+        openId = request.POST.get('openid', '')
         if adminCheck(openId):
-            result = {'status':'success'}
+            result = {'status': 'success'}
             request.session['openid'] = openId
         else:
             result = {'status': 'failed'}
@@ -106,6 +106,7 @@ def my_logout(request):
     2.1 管理员修改用户信息
     2.2 管理员审核的注册信息（同意就开通用户推送）
 """
+
 
 @admin_required
 def modify_user_info(request):
@@ -127,6 +128,7 @@ def modify_user_info(request):
     else:
         user = get_object_or_404(WxUser, pk=pk)
         return render_to_response("userInfo.html", {"user": user, "request": request})
+
 
 @admin_required
 def search_user(request):
@@ -156,19 +158,23 @@ def verify_user_info(request):
         uusers = UnconfirmUser.objects.filter(openId=openId)
         if verify is False:
             uusers.delete()
-            # print('delte user')
+            print('delte user')
             return HttpResponse(json.dumps(
                 {"data": serializers.serialize('json', UnconfirmUser.objects.all()), "state": True, "msg": "ok"}),
                 content_type="json/html; charset=UTF-8")
+        print(openId, len(openId), verify, uusers)
         if len(uusers) == 1:
+            source_permit, domain_permit = getAdminPermission(request)
+            # source_permit, domain_permit = [1, 2, 3, 4], [1, 2, 3, 4]
             uuser = uusers.first()
             # print(uuser.ammeter.values())
             wxuser = get_or_none(ConfirmedUser, openId=uuser.openId)
             # print(wxuser)
             if wxuser is None:
                 try:
-                    wxuser = ConfirmedUser.objects.create(openId=uuser.openId,name=uuser.name,phone=uuser.phone,
-                                                 address=uuser.address,IDcard=uuser.IDcard,extraInfo=uuser.extraInfo)
+                    wxuser = ConfirmedUser.objects.create(openId=uuser.openId, name=uuser.name, phone=uuser.phone,
+                                                          address=uuser.address, IDcard=uuser.IDcard,
+                                                          extraInfo=uuser.extraInfo)
                     for amt in uuser.ammeter.all():
                         wxuser.ammeter.add(amt)
                     uuser.delete()
@@ -185,16 +191,21 @@ def verify_user_info(request):
                 wxuser.save()
                 uuser.delete()
             return HttpResponse(json.dumps(
-                {"data": serializers.serialize('json', UnconfirmUser.objects.all()), "state": True, "msg": "ok"}),
+                {"data": serializers.serialize('json', UnconfirmUser.objects.filter(ammeter__source__in=source_permit,
+                                                                                    ammeter__domain__in=domain_permit)),
+                 "state": True, "msg": "ok"}),
                 content_type="json/html; charset=UTF-8")
         else:
+            print('here')
             return HttpResponse(json.dumps({"msg": "无此用户", "state": False}),
                                 content_type="json/html; charset=UTF-8")
 
     #  获取页面
     else:
         source_permit, domain_permit = getAdminPermission(request)
-        uncofirmUsers = UnconfirmUser.objects.filter(ammeter__source__in=source_permit,ammeter__domain__in=domain_permit)
+        # source_permit, domain_permit = [1, 2, 3, 4], [1, 2, 3, 4]
+        uncofirmUsers = UnconfirmUser.objects.filter(ammeter__source__in=source_permit,
+                                                     ammeter__domain__in=domain_permit)
         return render_to_response("verifyUser.html", {"uncofirmUsers": uncofirmUsers})
 
 
@@ -202,9 +213,54 @@ def verify_user_info(request):
 def confirmed_user_info(request):
     """已通过审核的用户"""
     source_permit, domain_permit = getAdminPermission(request)
-    confirmedUsers = ConfirmedUser.objects.filter(ammeter__source__in=source_permit,ammeter__domain__in=domain_permit)
-    projectName = ''
-    if len(source_permit) == 1:
-        projectName = Project.objects.get(source_id=source_permit[0]).projectname
-    return render_to_response("showUser.html", {"confirmedUsers": confirmedUsers,
-                                   "perojectName": projectName})
+    # source_permit, domain_permit = [1,2,3,4], [0,1,2,3,4,5,6,7,8,9,10]
+    confirmedUsers = ConfirmedUser.objects.filter(ammeter__source__in=source_permit,
+                                                  ammeter__domain__in=domain_permit)
+    if request.method == 'GET':
+        currentSource = request.GET.get('source_id', source_permit[0])
+        allProject = Project.objects.filter(source_id__in=source_permit)
+        if len(source_permit) == 1:
+            project = Project.objects.get(source_id=source_permit[0])
+        else:
+            project = Project.objects.get(source_id=currentSource)
+        confirmedUsers = confirmedUsers.filter(ammeter__source=currentSource)
+        # 这里的project指的是被选中的项目
+        return render_to_response("showUser.html", {"confirmedUsers": confirmedUsers,
+                                                    "project": project, "allProject": allProject})
+    elif request.method == 'POST':
+        # {"openId": openId.replace( /\s + / g, ""), "source_id": source_id, "ammeter_app_code": ammeter_app_code}
+        openId = request.POST.get('openid')
+        sourceId = request.POST.get('source_id')
+        code = request.POST.get('ammeter_app_code')
+        previous_code = request.POST.get('previous_code')
+        print(openId, sourceId, code, previous_code)
+        # 生效修改
+        try:
+            user = ConfirmedUser.objects.get(openId=openId)
+            user.ammeter.filter(source_id=sourceId, ammeter_app_code=previous_code).delete()
+            amt = Ammeters.objects.get(source_id=sourceId, ammeter_app_code=code)
+            user.ammeter.add(amt)
+        except Exception as e:
+            print('error')
+        return HttpResponse(json.dumps(
+            {"state": True, "msg": "ok"}),
+            content_type="json/html; charset=UTF-8")
+
+
+def assign_permission(request):
+    # 为管理员分配权限
+    print('进入assign')
+    if request.method == 'GET':
+        result = []
+        projects = Project.objects.all()
+        for project in projects:
+            msg = {
+                'project': project.projectname + '(source_id:' + str(project.source_id) + ')',
+                'domains': str(
+                    Ammeters.objects.filter(source_id=project.source_id).values('domain').distinct()).replace('{', '')
+                    .replace('\'domain\': ', '').replace('}', '')
+            }
+            result.append(msg)
+        superUsers = SuperUser.objects.all()
+        return render_to_response('assignPermission.html', {'superUsers': superUsers,
+                                                            'map': result})

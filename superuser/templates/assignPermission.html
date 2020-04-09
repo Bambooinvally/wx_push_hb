@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block show %} active {% endblock %}
+
 {% load staticfiles %}
 
 {% block extlib %}
@@ -8,22 +8,22 @@
 {% block content %}
     <div class="page-header ">
         <div class="h1">
-            <strong>用户列表</strong>
-{#            <small>{{ peroject.projectname }}</small>#}
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" id="selected" data-toggle="dropdown" value="{{ project.source_id }}">
-                {{ project.projectname }}
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="selected">
-                {% for proj in allProject %}
-                <li role="presentation">
-                    <a href="#" class="visibleProject" role="menuitem" tabindex="{{ proj.source_id }}">{{ proj.projectname }}</a>
-                </li>
-                {% endfor %}
+            <strong>超级用户列表</strong>
+            <small>管理超级用户的权限</small>
+        </div>
+    <h4>
+        项目-域映射表
+    </h4>
+    <div class="row">
+        {% for m in map %}
+        <div class="col-md-4">
+            <ul class="list-group">
+                <li class="list-group-item active">{{ m.project }}</li>
+                <li class="list-group-item">{{ m.domains }}</li>
             </ul>
         </div>
-        </div>
+        {% endfor %}
+    </div>
     </div>
 
     <div class="panel panel-default">
@@ -32,7 +32,7 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                     <div id="listContain" class="list-group">
-                        {% for user in confirmedUsers %}
+                        {% for user in superUsers %}
                             <div class="list-group-item">
                                 <div class="list-group-item-heading row">
                                     <div class="col-md-2">
@@ -47,17 +47,15 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 changeDevice">
-                                            <label>绑定设备：</label>
-                                            {% for data in user.ammeter.values %}
+                                            <label>管辖区域：</label>
                                             <div class="page">
                                                 <div class="page__bd page__bd_spacing">
                                                     <div class="btn btn-default bound" data-value="{{ data.ammeter_app_code }}"
                                                      openid="{{ user.openId }}">
-                                                        {{ data.ammeter_addr }}(设备号{{ data.ammeter_app_code }})
+                                                        {{ user.source_id }}-{{ user.domain }}
                                                     </div>
                                                 </div>
                                             </div>
-                                            {% endfor %}
                                         </div>
 {#                                        <input type="hidden" value="{{ user.openId }}"/>#}
                                         <br>

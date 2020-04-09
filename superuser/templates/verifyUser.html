@@ -71,14 +71,20 @@
     <!-- end of row -->
     <script type="text/javascript">
         $(document).ready(function () {
-            $(".verify-remove").click(function () {
+            $(document).on('click',".verify-remove",function () {
+                console.log('remove tag')
                 var openId = $(this).attr("data-openid");
                 postOpenid("/super/verify/user", openId, 0);
+
+                console.log('remove done'+openId)
             });
 
-            $(".verify-ok").click(function () {
+            $(document).on('click',".verify-ok",function () {
+                console.log('ok tag')
                 var openId = $(this).attr("data-openid");
                 postOpenid("/super/verify/user", openId, 1);
+
+                console.log('ok done'+ openId)
             });
         });
 
@@ -87,9 +93,10 @@
                 url: path,
                 type: "POST",
                 async: true,
-                data: {"openId": openId, "verify": verify},
+                data: {"openId": openId.replace(/\s+/g,""), "verify": verify},
                 success: function (res) {
                     var data = JSON.parse(res);
+                    console.log('success and '+data.state)
                     if (data.state) {
                         var list = JSON.parse(data.data);
                         str = "";
@@ -134,9 +141,12 @@
                                 "                                </div>\n" +
                                 "                            </div>";
                         }
-                        console.log(str);
+                        {#console.log(str);#}
                         $("#listContain").html(str)
                     }
+                },
+                error: function () {
+                  console.log('失败')
                 }
             })
         }

@@ -4,8 +4,9 @@ import time
 
 import requests
 
+from app.models import ConfirmedUser, Ammeters, get_or_none
 from service.Template import TemplateIdParams, TemplateContent
-from service.wxconfig import TEMPLATEMAP
+from service.wxconfig import TEMPLATEMAP, APPID, SECTET
 
 
 #  'appid': 'wx179a6296f724d40f'
@@ -16,10 +17,10 @@ def get_access_token():
     :return:
     """
     re = requests.get('https://api.weixin.qq.com/cgi-bin/token',
-                      params={'appid': 'wx179a6296f724d40f',
-                              'secret': 'c6274cc6daf329797170046b712a180d',
+                      params={'appid': APPID,
+                              'secret': SECTET,
                               'grant_type': 'client_credential'})
-    msg = json.loads(re.content.decode())
+    msg = json.loads(re.content.decode('utf-8'))
     access_token = msg.get("access_token", "")
     expires_in = msg.get("expires_in", 7200)
     return (access_token, expires_in)
@@ -99,7 +100,7 @@ class WxMenuUtil:
 class WxMessageUtil:
 
     @staticmethod
-    def send_message_by_openid(access_token, openId, templateId, miniPorgramParams, template_data):
+    def send_message_by_openid(access_token, openId, templateId, miniPorgramParams, template_data, device):
         """
         定向推送消息
         :param access_token:
@@ -113,12 +114,22 @@ class WxMessageUtil:
             miniPorgramParams = ""
         else:
             miniPorgramParams = miniPorgramParams.__dict__
+        # print('device:', str(device).split('app_code_id:'))
+        device_data = str(device).split('app_code_id:')
+        ammeter = get_or_none(Ammeters,source_id=device_data[0].split(':')[1], ammeter_app_code=device_data[1])
+        if ammeter is None:
+            ammeter.coordinate = ''
+            ammeter.ammeter_addr = ''
         re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
                            params={"access_token": access_token},
                            data=json.dumps({
                                "touser": openId,
                                "template_id": templateId,
-                               "url": "http://weixin.qq.com/download",
+                               "url": "https://apis.map.qq.com/uri/v1/marker?"
+                                      "marker=coord:" + str(ammeter.coordinate) + ";"
+                                      "title:"+ str(ammeter.ammeter_addr) +";"
+                                      "addr:报警地点" 
+                                      "&referer=myapp",
                                # "topcolor": "#FF0000",
                                # "miniprogram": miniPorgramParams,
                                "data": template_data.__dict__
@@ -288,7 +299,7 @@ class WxUserTagUtil:
         # tags = []
         re = requests.get(url='https://api.weixin.qq.com/cgi-bin/tags/get',
                           params={'access_token': access_token})
-        tags = json.loads(re.content,encoding='utf-8')
+        tags = json.loads(re.content.decode('utf-8'))
         return tags['tags']
 
     @staticmethod
@@ -378,7 +389,7 @@ class WxUserTagUtil:
                            params={'access_token': access_token},
                            data=json.dumps({'openid': openid}))
         try:
-            tag = json.loads(re.content)["tagid_list"]
+            tag = json.loads(re.content.decode('utf-8'))["tagid_list"]
         except Exception as e:
             tag = ''
             print('get tag error\n',re.content,e)
@@ -386,6 +397,6 @@ class WxUserTagUtil:
 
 
 if __name__ == "__main__":
-    access_token = '31_T5CSFzX2bR_c8JUWpnJCnEwoEIp6dfRyYZrMdl890OJ3q9kiEZCCshcTXUydD3fk-6QQl_1M9vyg5w4jIqQyS0qzQaBEwYd5-LpOHFDmQ7KtQyuCnv8EYy3nurbqgAeGT5ol8Mu4hsjv0mHTFHTcAGANPB'
+    access_token = '31_OwTELlcEygEuy1eO2cS2OEOTtIFmTq8HfY629dOt-fiHKOrEIlHNyPQQoUbO_5CcVoTz4Dg-hNtyVkbt2hPDq_V8-zaIHTvQAMt5zZfSJ_QKjknuveyurExwgmqyTygGUSboYuWAluXHSY1vTASeABAPWO'
     # print(WxMenuUtil)
-    print(WxUserTagUtil.getUserByTag(access_token,101))
+    print(WxUserTagUtil.getTag(access_token))

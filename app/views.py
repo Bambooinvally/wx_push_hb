@@ -17,7 +17,7 @@ from service.wxutils import WxMenuUtil, WxMessageUtil, get_access_token
 from urllib import parse
 
 from wx_push import specsetting
-from wx_push.specsetting import SUPERUSER_LOGIN_URL
+from wx_push.specsetting import SUPERUSER_LOGIN_URL, ADMIN_TAG
 
 
 def recv_message(request):
@@ -118,11 +118,11 @@ def create_superMenu(request):
                         "name": "绑定账号",
                         "url": GET_CODE
                     },
-                    {
-                        "type": "view",
-                        "name": "修改个人信息",
-                        "url": GET_CODE
-                    },
+                    # {
+                    #     "type": "view",
+                    #     "name": "修改个人信息",
+                    #     "url": GET_CODE
+                    # },
                     {
                         "type": "view",
                         "name": "管理员登录",
@@ -146,7 +146,7 @@ def create_superMenu(request):
 
         ],
         "matchrule": {
-            "tag_id": "101"
+            "tag_id": ADMIN_TAG
         }
     }
     # print('in create menu access token is:'+str(access_token))
@@ -249,12 +249,13 @@ def test(request):
     WxMessageUtil.send_message_by_openid(access_token=access_token,openId='o-XSVwRj5uPsuu4C3ckFLpsxqPsc',
                                          templateId='0ZP2vzOjx3UpQgIMZYdHsR6SxGuZbGW2Tmtrv3RY5xw',miniPorgramParams=None,
                                          template_data=TemplateContent(TemplateIdParams('xxx报警'),
-                                                                       TemplateIdParams('备注'),
+                                                                       TemplateIdParams('用户：'+"zty" + ' 联系方式：' + '1111' + '\n点击可导航至报警地点'),
                                                                        TemplateIdParams('xxx电弧危险'),
                                                                        TemplateIdParams('xxx小区xxx室'),
                                                                        TemplateIdParams('123'),
                                                                        TemplateIdParams('高'),
-                                                                       TemplateIdParams('2020年3月18日20:33')))
+                                                                       TemplateIdParams('2020年3月18日20:33')),
+                                         device='source:1'+'app_code_id:30')
     return HttpResponse('ok')
 
 

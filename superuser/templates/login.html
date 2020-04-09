@@ -12,7 +12,7 @@
     <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/3.3.4/js/bootstrap.min.js'%}"></script> 
     
-    <title>魔眼</title>
+    <title>魔眼管理员登录</title>
     <style type="text/css">
         .board {
             background-color: rgba(0, 0, 0, 0.6);
@@ -45,9 +45,9 @@
             <div class="col-md-4"></div>
             <div class="col-md-4 board text-white">
                 <h3>
-                    <strong>用户登录</strong>
+                    <strong>运营人员登录</strong>
                 </h3>
-                <form action="/login/" method="post">
+                <form action="/dashboard" method="post">
                     <div class="form-group">
                         <label><span class="glyphicon glyphicon-user"></span>用户名</label>
                         <input type="text" class="form-control" name="username" placeholder="输入账号">
@@ -71,9 +71,24 @@
 </div>
 
 {#{% include 'base/common/error.html' %}#}
-<footer class="text-center">
-    Copyright © 2020 杭州电子科技大学CAD研究所 All Rights Reserved
-</footer>
+{#<footer class="text-center">#}
+{#    Copyright © 2020 杭州电子科技大学CAD研究所 All Rights Reserved#}
+{#</footer>#}
 
 </body>
+
 </html>
+
+<script>
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+    $(document).ready(function () {
+        var err = getQueryString('err');
+        if(err)
+            alert('账号或密码错误！')
+    })
+</script>

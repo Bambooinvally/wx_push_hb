@@ -14,9 +14,9 @@ SEND_TEMPLATE_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/templates
 '''
 公众号的参数
 '''
-APPID = "wx179a6296f724d40f"
-SECTET = "c6274cc6daf329797170046b712a180d"
-
+APPID = "wx123ef55e533e969e"
+SECTET = "8358893fc0fea700af2a36d8de87586b"
+TEMPLATE_ID = 'BDO8geYLSiJx-tWmb_W4weJqhDGktJq0XbL1iBt4whQ'
 TEMPLATEMAP = {
     "deviceWarn": "0ZP2vzOjx3UpQgIMZYdHsR6SxGuZbGW2Tmtrv3RY5xw",
     "userPushDown": "MsyFYiLvtbMDjT6jqnEJqQpHZL-NPTJHWVOgBmTUKaY"

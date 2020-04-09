@@ -37,6 +37,7 @@ def setconfiga(name, value, valueAttached):
         Config.objects.create(name=name, value=value, valueAttached=valueAttached)
     else:
         c.value = value
+        c.valueAttached=valueAttached
         c.save()
 
 

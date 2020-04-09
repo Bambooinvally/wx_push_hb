@@ -4,7 +4,7 @@ from django.core.management import call_command
 
 import logging
 
-from app.models import WxUser, SuperUser, Config
+from app.models import WxUser, SuperUser, Config,URLSource
 
 logger = logging.getLogger(__name__)
 
@@ -23,4 +23,8 @@ class Command(BaseCommand):
             'value':30
         })
         # 添加自己的微信openid
-        SuperUser.objects.get_or_create(openId="o-XSVwRj5uPsuu4C3ckFLpsxqPsc", name='zty')
+        SuperUser.objects.get_or_create(openId="o-XSVwRj5uPsuu4C3ckFLpsxqPsc", name='周天宇',source_id='all',
+                                        domain='all')
+
+        URLSource.objects.get_or_create(url='http://tzdpc.piercingeyes.cn/api/dangerlist.json',desc='台州电瓶车试点',
+                                        vaild=1)
