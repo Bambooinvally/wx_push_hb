@@ -13,11 +13,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, render_to_response, get_object_or_404
 
-from app.configutils import getconfig, Ammeters, ConfirmedUser, Project, ACCESS_TOKEN
-from service.Template import TemplateContent, TemplateIdParams
-from service.utils import simuWarn
-from service.wxconfig import TEMPLATE_ID
-from service.wxutils import WxUserTagUtil, WxMessageUtil
+from app.configutils import getconfig, Ammeters, ConfirmedUser, Project
+from service.wxutils import WxUserTagUtil
 # Create your views here.
 from django.contrib.auth import logout, authenticate
 
@@ -302,34 +299,3 @@ def warn_detail(request):
         if data.status_code == 200:
             return HttpResponse(data.content,
                 content_type="json/html; charset=UTF-8")
-
-
-def simulateWarning(request):
-    if request.method == 'GET':
-        return render_to_response("simuWarn.html")
-
-    elif request.method == 'POST':
-        # 生成模拟警报数据
-        power = request.POST.get('power')
-        arc = request.POST.get('arc')
-        remain_cur = request.POST.get('remain_cur')
-        line_temp = request.POST.get('line_temp')
-        kettle = request.POST.get('kettle')
-        dpc = request.POST.get('dpc')
-        warn_content = simuWarn(power,arc,remain_cur,line_temp,kettle,dpc)
-        access_token = getconfig(ACCESS_TOKEN, "")
-        superUsers = SuperUser.objects.all()
-        if warn_content:
-            for su in superUsers:
-                WxMessageUtil.send_message_by_openid(access_token=access_token, openId=su.openId,
-                                                     templateId=TEMPLATE_ID,
-                                                     miniPorgramParams=None,
-                                                     template_data=TemplateContent(TemplateIdParams(warn_content[0]),
-                                                                                   TemplateIdParams(warn_content[1]),
-                                                                                   TemplateIdParams(warn_content[2]),
-                                                                                   TemplateIdParams(warn_content[3]),
-                                                                                   TemplateIdParams(warn_content[4]),
-                                                                                   TemplateIdParams(warn_content[5]),
-                                                                                   TemplateIdParams(warn_content[6])),
-                                                     device='source:'+'0'+'app_code_id:'+'-1')
-        return HttpResponseRedirect(reverse('warn-simulate'))

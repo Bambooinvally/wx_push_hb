@@ -16,9 +16,9 @@ Including another URLconf
 
 import os, django
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
-#
-# django.setup()
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+
+django.setup()
 from django.conf.urls import url
 import app.views as aviews
 import superuser.views as suview
@@ -29,21 +29,21 @@ from django.conf.urls import url ##新增
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # wx 使用
-    url("^MP_verify_CoynMqa4m1dQm42K.txt$",aviews.verify),
+    url("^MP_verify_dlUHfQ1hxd6SwBwe.txt$",aviews.verify),
     url("^wxrecv/", aviews.recv_message, name='wx-recv-message'),
-    url("^menu/create$", aviews.create_menu, name='wx-menu-create'),
-    url("^menu/supercreate$", aviews.create_superMenu, name='wx-supermenu-create'),
+    #url("^menu/create$", aviews.create_menu, name='wx-menu-create'),
+    #url("^menu/supercreate$", aviews.create_superMenu, name='wx-supermenu-create'),
     # url("^menu/delete$", aviews.del_menu, name='wx-menu-delete'),
     url("^app/params$", aviews.getAppParams, name='wx-app-params'),
     url("^user/register$", aviews.register, name='wx-register'),
     url("^get/ammeters$", aviews.getAmmeters, name='get-ammeter'),
 
     # 测试路径
-    url("^kylinz/test$",aviews.test, name='test'),
+    # url("^kylinz/test$",aviews.test, name='test'),
     
     ##　以下是新增
-    # url(r'^static/(?P<path>.*)$', static.serve,
-    #   {'document_root': settings.STATIC_ROOT}, name='static'),
+    url(r'^static/(?P<path>.*)$', static.serve,
+      {'document_root': settings.STATIC_ROOT}, name='static'),
 
     # 管理员
     
@@ -53,10 +53,7 @@ urlpatterns = [
     url("^super/verify/user", suview.verify_user_info, name='verify-user'),
     url("^super/search/user", suview.search_user, name='search-user'),
     url("^super/show/user",suview.confirmed_user_info, name='show-user'),
-
-
-    # 运营者
-    url("^dashboard$", suview.my_login, name='manage-login'),
-    url("^dashboard/user/permission", suview.assign_permission, name='permission-assign'),
+    url("^super/warn/detail", suview.warn_detail, name='warn-detail'),
+    url("^super/warn/simulate", suview.simulateWarning, name='warn-simulate'),
 
 ]

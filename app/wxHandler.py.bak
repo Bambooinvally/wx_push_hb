@@ -4,7 +4,6 @@ import time
 from app.configutils import setconfiga, ACCESS_TOKEN, getconfigattached
 from app.models import Config, WxUser
 from service.Template import TemplateIdParams, TemplateContent
-from service.utils import getWarnLevel
 from service.wxutils import WxMessageUtil, get_access_token
 
 
@@ -134,14 +133,14 @@ def handlerSendWarningMessage(msg, user=None):
         tip = "功率过大报警"
         deviceName = msg['location'] + "设备"
         tipMore = "报警功率为" + str(msg["value"])
-        level = getWarnLevel(msg['source_id'],msg['aammeterId'])
+        level = "三级"
         warntime = msg["time"]
         name = '--'
         phone = '--'
         if user is not None:
             name = user.name
             phone = user.phone
-        other = '用户：' + str(name) + ' 联系方式：' + str(phone) + '\n点击查看详情'
+        other = '用户：' + str(name) + ' 联系方式：' + str(phone) + '\n点击可导航至报警地点'
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "REMAIN_CUR":
         tip = "剩余电流危险报警"
@@ -154,14 +153,14 @@ def handlerSendWarningMessage(msg, user=None):
         tip = "故障电弧危险报警"
         deviceName = msg['location'] + "设备"
         tipMore = '电弧异常！' # + str(msg["value"]) + '次每三十秒'
-        level = getWarnLevel(msg['source_id'],msg['ammeterId'])
+        level = "--"
         warntime = msg["time"]
         name = '--'
         phone = '--'
         if user is not None:
             name = user.name
             phone = user.phone
-        other = '用户：' + str(name) + ' 联系方式：' + str(phone) + '\n点击查看详情'
+        other = '用户：' + str(name) + ' 联系方式：' + str(phone) + '\n点击可导航至报警地点'
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime)
     elif type == "SMOKE":
         tip = "烟雾报警"
@@ -180,14 +179,14 @@ def handlerSendWarningMessage(msg, user=None):
         tip = "违规电器["+msg['value']+"]接入报警"
         deviceName = msg['location'] + "设备"
         tipMore = "用电器功率："+msg['valueAttach'] + 'W'
-        level = getWarnLevel(msg['source_id'],msg['ammeterId'])
+        level = "一级"
         warntime = msg['time']
         name = '--'
         phone = '--'
         if user is not None:
             name = user.name
             phone = user.phone
-        other = '用户：'+str(name) + ' 联系方式：' + str(phone) + '\n点击查看详情'
+        other = '用户：'+str(name) + ' 联系方式：' + str(phone) + '\n点击可导航至报警地点'
         return createSendWarningMsg(tip, deviceName, tipMore, level, warntime,other)
     elif type == "LINE_TEMP":
         tip = "线温报警危险"

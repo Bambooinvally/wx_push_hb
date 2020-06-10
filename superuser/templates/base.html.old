@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/3.3.4/js/bootstrap.min.js' %}"></script>
+    <title>管理员</title>
+    {% block extlib %} {% endblock %}
+</head>
+<body>
+<div class="wrapper">
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand"><strong>牟眼</strong></span>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="{% block search %} {% endblock %}"><a href="/super/search/user">查询用户信息</a></li>
+                    <li class="{% block verify %} {% endblock %}"><a href="/super/verify/user">审核用户</a>
+                    </li>
+                    <li class="{% block show %} {% endblock %}"><a href="/super/show/user">已审核用户</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a>{% block name %} {{ name }} {% endblock %}</a></li>
+                    <li><a href="/logout">注销</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+    <!-- end of container -->
+    <div class="push">
+        <!-- // -->
+    </div>
+</div>
+<!-- end of wrapper -->
+{#<footer class="text-center">#}
+{#    Copyright © 2013-2016 杭州电子科技大学CAD研究所 All Rights Reserved#}
+{#</footer>#}
+</body>
+</html>

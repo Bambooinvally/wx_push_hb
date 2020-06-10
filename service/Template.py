@@ -32,3 +32,19 @@ class TemplateContent:
         self.keyword3 = keywordArgs[2].__dict__
         self.keyword4 = keywordArgs[3].__dict__
         self.keyword5 = keywordArgs[4].__dict__
+
+    def getKeywords(self):
+        return [self.keyword1,self.keyword2,self.keyword3,self.keyword4,self.keyword5]
+
+if __name__ == '__main__':
+    first = TemplateIdParams("设备报警")
+    remark = TemplateIdParams('remark')
+    keywordArgs = [
+        TemplateIdParams('1'),
+        TemplateIdParams('2'),
+        TemplateIdParams('3'),
+        TemplateIdParams('4'),
+        TemplateIdParams('5')
+    ]
+    tp = TemplateContent(first, remark, *keywordArgs)
+    print(tp.getKeywords())

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+
+        <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
+{#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
+{#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+    <title>报警详情</title>
+    <style type="text/css">
+        .board {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            padding: 30px 30px 40px 40px;
+            height: 430px;
+            overflow: auto;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        body {
+            background: {#url(/static/images/background.jpg)#} no-repeat;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="page__hd">
+        <h1 class="page__title">报警详情
+        </h1>
+        <p class="page__desc">{{ location }}</p>
+    </div>
+    <input type="hidden" id="source" value="{{ source_id }}">
+    <input type="hidden" id="device" value="{{ app_code_id }}">
+    <div class="page__bd">
+        <div class="weui-form-preview">
+            <div class="weui-form-preview__hd">
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">报警内容</label>
+                    <em class="weui-form-preview__value">{{ warn_content }}</em>
+                </div>
+            </div>
+            <div class="weui-form-preview__bd">
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">违禁电器接入</label>
+                    <span class="weui-form-preview__value">{{ insert_app }}</span>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">牟眼多维度预警等级</label>
+                    <span class="weui-form-preview__value">{{ warn_level }}</span>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="weui-form-preview__hd">
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">实时用电数据</label>
+{#                    <em class="weui-form-preview__value">{{ warn_content }}</em>#}
+                </div>
+            </div>
+            <div class="weui-form-preview__bd">
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">实时功率</label>
+                    <span class="weui-form-preview__value" id="power">--</span>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">线路温度</label>
+                    <span class="weui-form-preview__value" id="line_temp">--</span>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">全屋电弧</label>
+                    <span class="weui-form-preview__value" id="arc">--</span>
+                </div>
+            </div>
+
+            <div class="weui-form-preview__ft">
+                <a class="weui-form-preview__btn weui-form-preview__btn_primary"
+                   href="https://apis.map.qq.com/uri/v1/marker?marker=coord:{{ coord }};title:{{ location }};addr:报警地点&referer=myapp">导航至该地点</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    function getRealtimeData() {
+        var source_id = $('#source').val();
+        var ammeterid = $('#device').val();
+        console.log(source_id + ammeterid)
+        $.ajax({
+            url: '/super/warn/detail',
+            type: 'post',
+            dataType: 'json',
+            //sync: true,
+            data: {'source_id':source_id,'ammeterid':ammeterid},
+            success: function (data) {
+                var power = data.power + 'W';
+                var lineTemp = data.line_temp + '℃';
+                var arc = data.arc + '%';
+                if(!data.power)
+                    power = '--';
+                if(!data.line_temp)
+                    lineTemp = '--';
+                $('#power').html(power);
+                $('#line_temp').html(lineTemp);
+                $('#arc').html(arc)
+
+            }
+        })
+    }
+    $(document).ready(function () {
+        setInterval(getRealtimeData, 3000)
+
+    })
+
+</script>

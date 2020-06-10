@@ -1,5 +1,5 @@
 import datetime
-from django.db import connections
+
 import wx_push.urls
 import json
 import os
@@ -30,7 +30,6 @@ def getWarn(warnData):
     type = ["POWER",  "ARC",  "APP"]
     # url = "https://www.zjzwfwtech.com/api/dangerlist.json/"
     while True:
-        close_old_connections()
         # 获取所有的url
         url_map = get_urls()
         for source_id in url_map:
@@ -53,7 +52,6 @@ def prepareData(warnData, pushData):
     :return:
     """
     while True:
-        close_old_connections()
         try:
             data = warnData.get(True)
             if data is None:
@@ -75,7 +73,7 @@ def prepareData(warnData, pushData):
                 continue
             commonUsers = None
             superUsers = None
-            if (data['type'] == 'ARC' and data['location'] not in ['演示箱',]) or (data['value'] == '电水壶' and data['location'] in ['外岙村3-70户','长沙村83号出租房']):
+            if data['type'] == 'ARC' or (data['value'] == '电水壶' and data['location'] not in ['外岙村4-51东面平房(孤寡老人)','外岙村4-33后面出租房(左边)']):
                 continue
             if data['type'] != 'APP':
                 # print('2 data type is not app')
@@ -136,7 +134,6 @@ def prepareData(warnData, pushData):
 
 def pushWx(pushData):
     while True:
-        close_old_connections()
         try:
             data = pushData.get(True)
             # 获取推送时间间隔，单位：分钟
@@ -158,17 +155,12 @@ def pushWx(pushData):
                 continue
             WxMessageUtil.send_message_by_openid(data["access_token"], data["open_id"],
                                                  data["template_id"], data["miniProgramParams"],
-                                                 data["template_data"],data['device'])
+                                                 data["template_data"])
             PushHistory.objects.create(touser=data["open_id"],name=data['username'],type=data['type'],
                                        massage=str(data['device'])+str(data["template_data"].keyword1)+
                                        str(data["template_data"].keyword5))
         except Exception as e:
             print("pushWx Exception:", e)
-
-
-def close_old_connections():
-    for conn in connections.all():
-        conn.close_if_unusable_or_obsolete()
 
 
 class Command(BaseCommand):

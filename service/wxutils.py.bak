@@ -102,7 +102,7 @@ class WxMenuUtil:
 class WxMessageUtil:
 
     @staticmethod
-    def send_message_by_openid(access_token, openId, templateId, miniPorgramParams, template_data, device=None):
+    def send_message_by_openid(access_token, openId, templateId, miniPorgramParams, template_data, device):
         """
         定向推送消息
         :param access_token:
@@ -122,10 +122,8 @@ class WxMessageUtil:
         ammeterId = device_data[1]
         ammeter = get_or_none(Ammeters,source_id=sourceId, ammeter_app_code=ammeterId)
         if ammeter is None:
-            coordinate = ''
-        else:
-            coordinate = ammeter.coordinate
-            ammeter_addr = ammeter.ammeter_addr
+            ammeter.coordinate = ''
+            ammeter.ammeter_addr = ''
         keyWords = template_data.getKeywords()
         # print('keywords:',keyWords)
         re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
@@ -139,7 +137,7 @@ class WxMessageUtil:
                                "&warn_level=" + str(keyWords[3]['value']) +
                                "&source_id=" + sourceId +
                                "&ammeterid=" + ammeterId +
-                               "&coord=" + str(coordinate),
+                               "&coord=" + str(ammeter.coordinate),
                                # "topcolor": "#FF0000",
                                # "miniprogram": miniPorgramParams,
                                "data": template_data.__dict__
@@ -406,6 +404,6 @@ class WxUserTagUtil:
 
 
 if __name__ == "__main__":
-    access_token = '32_0GcLcZx_AWUsPFyXNM3hoNBJsrS5XgOd7N6n4CE4QhV3VG8GGXD_gVAT5ucr7BWxwHy6isX8qSNmwUcpVfR32lkFZXub8HhMHDBMasJ-cp7xbLAeJWQAJpLkFrjMab2VNTn9apilLvqlty6oYYFiAFAPPW'
+    access_token = '31_OwTELlcEygEuy1eO2cS2OEOTtIFmTq8HfY629dOt-fiHKOrEIlHNyPQQoUbO_5CcVoTz4Dg-hNtyVkbt2hPDq_V8-zaIHTvQAMt5zZfSJ_QKjknuveyurExwgmqyTygGUSboYuWAluXHSY1vTASeABAPWO'
     # print(WxMenuUtil)
     print(WxUserTagUtil.getTag(access_token))

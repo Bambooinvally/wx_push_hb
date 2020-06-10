@@ -64,4 +64,10 @@ SUPERUSER_LOGIN = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" \
            "&response_type=code" \
            "&scope=snsapi_base&" \
            "state=123#wechat_redirect"
-
+           
+SIMULATE = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" \
+           + APPID + "&" \
+           "redirect_uri=http://wxpushky.piercingeyes.cn/super/warn/simulate"  + \
+           "&response_type=code" \
+           "&scope=snsapi_base&" \
+           "state=123#wechat_redirect"

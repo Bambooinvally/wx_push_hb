@@ -241,7 +241,7 @@ def getAmmeters(request):
     return HttpResponse(json.dumps(data),content_type="json/html; charset=UTF-8")
 
 def verify(request):
-    return HttpResponse('CoynMqa4m1dQm42K')
+    return HttpResponse('dlUHfQ1hxd6SwBwe')
 
 
 def test(request):
@@ -249,13 +249,12 @@ def test(request):
     WxMessageUtil.send_message_by_openid(access_token=access_token,openId='o-XSVwRj5uPsuu4C3ckFLpsxqPsc',
                                          templateId='0ZP2vzOjx3UpQgIMZYdHsR6SxGuZbGW2Tmtrv3RY5xw',miniPorgramParams=None,
                                          template_data=TemplateContent(TemplateIdParams('xxx报警'),
-                                                                       TemplateIdParams('用户：'+"zty" + ' 联系方式：' + '1111' + '\n点击可导航至报警地点'),
+                                                                       TemplateIdParams('备注'),
                                                                        TemplateIdParams('xxx电弧危险'),
                                                                        TemplateIdParams('xxx小区xxx室'),
                                                                        TemplateIdParams('123'),
                                                                        TemplateIdParams('高'),
-                                                                       TemplateIdParams('2020年3月18日20:33')),
-                                         device='source:1'+'app_code_id:30')
+                                                                       TemplateIdParams('2020年3月18日20:33')))
     return HttpResponse('ok')
 
 

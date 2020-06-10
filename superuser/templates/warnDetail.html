@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta name="renderer" content="webkit">
+{#    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">#}
+     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+
+    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
+    {#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
+    {#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+    <!-- echarts packs-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+    <title>报警详情</title>
+    <style type="text/css">
+        .board {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            padding: 30px 30px 40px 40px;
+            height: 430px;
+            overflow: auto;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        body {
+            background:  no-repeat;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="page__hd">
+        <h3 class="page__title text-center"><strong>报警详情</strong>
+        </h3>
+        <p class="text-center">{{ location }}</p>
+    </div>
+    <input type="hidden" id="source" value="{{ source_id }}">
+    <input type="hidden" id="device" value="{{ app_code_id }}">
+    <div class="page__bd">
+        <div class="weui-form-preview">
+            <div class="weui-form-preview__hd">
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">报警内容</label>
+                    <span class="weui-form-preview__value" style="font-size: small" id="content">{{ warn_content }}</span>
+                </div>
+            </div>
+            <div class="weui-form-preview__bd">
+{#                <div class="weui-form-preview__item">#}
+{#                    <label class="weui-form-preview__label">违禁电器接入</label>#}
+{#                    <span class="weui-form-preview__value">{{ insert_app }}</span>#}
+{#                </div>#}
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">牟眼多维度预警等级</label>
+                    <span class="weui-form-preview__value">{{ warn_level }}</span>
+                </div>
+                <div class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">处理建议</label>
+                    <span class="weui-form-preview__value">
+                        {% if warn_level == '三级' %}
+                        建议持续跟进观察
+                        {% elif warn_level == '二级' %}
+                        建议及时前往现场排除风险
+                        {% elif warn_level == '一级' %}
+                        疑似重大用电安全隐患，建议立即排查！
+                        {% else %}
+                        无建议
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+{#            <div class="weui-form-preview__hd">#}
+{#                <div class="weui-form-preview__item">#}
+{#                    <label class="weui-form-preview__label">实时用电数据</label>#}
+                    {#                    <em class="weui-form-preview__value">{{ warn_content }}</em>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="weui-form-preview__bd">#}
+{#                <div class="weui-form-preview__item">#}
+{#                    <label class="weui-form-preview__label">实时功率</label>#}
+{#                    <span class="weui-form-preview__value" id="power">--</span>#}
+{#                </div>#}
+{#                <div class="weui-form-preview__item">#}
+{#                    <label class="weui-form-preview__label">线路温度</label>#}
+{#                    <span class="weui-form-preview__value" id="line_temp">--</span>#}
+{#                </div>#}
+{#                <div class="weui-form-preview__item">#}
+{#                    <label class="weui-form-preview__label">全屋电弧</label>#}
+{#                    <span class="weui-form-preview__value" id="arc">--</span>#}
+{#                </div>#}
+{#            </div>#}
+            <label class="weui-form-preview__label" style="margin-left: 15px;font-size: small">AI智能分析</label>
+            <div id="container" style="height:230%"></div>
+            <div class="weui-form-preview__ft">
+                <a class="weui-form-preview__btn weui-form-preview__btn_primary"
+                   href="https://apis.map.qq.com/uri/v1/marker?marker=coord:{{ coord }};title:{{ location }};addr:报警地点&referer=myapp">导航至该地点</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    function getRealtimeData() {
+        var source_id = $('#source').val();
+        var ammeterid = $('#device').val();
+        var content = $('#content').html();
+        //console.log(content)
+        var radarData = [];
+        $.ajax({
+            url: '/super/warn/detail',
+            type: 'post',
+            dataType: 'json',
+            sync: false,
+            data: {'source_id': source_id, 'ammeterid': ammeterid},
+            success: function (data) {
+                console.log('ajax'+data.power)
+                var tp=[];
+                var lt=data.line_temp;
+                var power = data.power;
+                var arc = data.arc;
+                var rc = data.remain_cur;
+                var app = data.app;
+                var et = data.env_temp;
+                var local_score=0;
+                if(!lt)
+                    lt = 20;
+                if(!rc)
+                    rc = 100;
+                if(!et)
+                    et = 24;
+                tp.push(lt);
+
+                if(content.search('违规电器') != -1) {
+                    local_score = 45
+                    power = parseInt(content.match(/\d+(.\d+)?/g));
+                    console.log('local power:'+power)
+                    if(data.power > power)
+                        power = data.power
+                }
+                tp.push(power);
+
+                tp.push(arc);
+
+                tp.push(rc);
+                if(local_score > app)
+                    app = local_score
+                tp.push(app);
+
+                tp.push(et);
+                radarData.push(tp)
+                console.log('success func'+radarData)
+                drowRadar(radarData);
+            }
+
+        })
+
+    }
+
+    $(document).ready(function () {
+        getRealtimeData();
+    })
+
+    function drowRadar(data) {
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = null;
+        //var x = [[ 20, 1044, 20, 100, 0, 24]]
+        // Schema:
+        // 线温、功率、电弧、剩余电流、用电器、环境温度
+        var dataBJ = data;
+             //x
+        //dataBJ.push(getRealtimeData())
+        {#    [#}
+        {#    [ 20, 2400, 20, 100, 79, 24],#}
+        {#];#}
+        console.log(dataBJ)
+        //console.log('by func:'+getRealtimeData())
+        var lineStyle = {
+            normal: {
+                width: 1,
+                opacity: 0.5
+            }
+        };
+
+        option = {
+            //backgroundColor: '#161627',
+            {#title: {#}
+            {#    text: 'AQI - 雷达图',#}
+            {#    left: 'center',#}
+            {#    textStyle: {#}
+            {#        color: '#eee'#}
+            {#    }#}
+            //},
+            {#legend: {#}
+            {#    bottom: 0,#}
+            {#    data: ['北京'],#}
+            {#    itemGap: 20,#}
+            {#    textStyle: {#}
+            {#        color: '#080305',#}
+            {#        fontSize: 10#}
+            {#    },#}
+            {#    selectedMode: 'single'#}
+            //{#},#}
+            // visualMap: {
+            //     show: true,
+            //     min: 0,
+            //     max: 20,
+            //     dimension: 6,
+            //     inRange: {
+            //         colorLightness: [0.5, 0.8]
+            //     }
+            // },
+            radar: {
+                indicator: [
+                    {name: '线温', max: 100},
+                    {name: '功率', max: 2600},
+                    {name: '电弧', max: 100},
+                    {name: '剩余电流', max: 2000},
+                    {name: '用电器', max: 100},
+                    {name: '环境温度', max: 80}
+                ],
+                shape: 'circle',
+                splitNumber: 5,
+                name: {
+                    textStyle: {
+                        color: 'rgb(238, 197, 102)'
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: [
+                            'rgba(114, 172, 209, 0.1)', 'rgba(114, 172, 209, 0.2)',
+                            'rgba(114, 172, 209, 0.4)', 'rgba(114, 172, 209, 0.6)',
+                            'rgba(114, 172, 209, 1)', 'rgba(114, 172, 209, 5)'
+                        ].reverse()
+                    }
+                },
+                splitArea: {
+                    show: false
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: 'rgba(114, 172, 209, 0.5)'
+                    }
+                }
+            },
+            series: [
+                {
+                    name: 'data',
+                    type: 'radar',
+                    lineStyle: lineStyle,
+                    data: dataBJ,
+                    symbol: 'none',
+                    itemStyle: {
+                        color: '#F9713C'
+                    },
+                    areaStyle: {
+                        opacity: 0.1
+                    }
+                },
+            ]
+        };
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+
+        }
+</script>

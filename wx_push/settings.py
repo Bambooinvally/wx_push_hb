@@ -123,8 +123,8 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = 'static'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATIC_ROOT = 'static'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, '/static/'),)
 # print(str(BASE_DIR),str(STATICFILES_DIRS))
 LOGIN_URL = '/login/'
 
