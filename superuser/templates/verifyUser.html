@@ -29,13 +29,14 @@
                                 <div class="list-group-item-text">
                                     <div class="row">
                                         <div class="col-md-5">
-                                            <p>手机号：{{ uuser.phone }}</p>
+                                            <p>学号：{{ uuser.code }}</p>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-10">
                                             <p>绑定设备：{% for data in uuser.ammeter.values %}
-                                                {{ data.ammeter_addr }}(设备号{{ data.ammeter_app_code }}) </p>
+{#                                                {{ data.ammeter_addr }}(设备号{{ data.ammeter_app_code }}) </p>#}
+                                                {{ data.ammeter_addr }}</p>
                                                 {% endfor %}
                                         </div>
                                         <input type="hidden" value="{{ uuser.openId }}"/>
@@ -112,12 +113,12 @@
                                 "                                <div class=\"list-group-item-text\">\n" +
                                 "                                    <div class=\"row\">\n" +
                                 "                                        <div class=\"col-md-5\">\n" +
-                                "                                            <p>手机号： " + item.fields.phone + " </p>\n" +
+                                "                                            <p>学号： " + item.fields.code + " </p>\n" +
                                 "                                        </div>\n" +
                                 "                                    </div>\n" +
                                 "                                    <div class=\"row\">\n" +
                                 "                                        <div class=\"col-md-10\">\n" +
-                                "                                            <p>地址：" + item.fields.address + " </p>\n" +
+                                "                                            <p>绑定设备：" + item.fields.ammeter.ammeter_addr + " </p>\n" +
                                 "                                        </div>\n" +
                                 "                                    </div>\n" +
                                 "                                    <div class=\"row\">\n" +

@@ -1,15 +1,60 @@
 from urllib.parse import urlencode
 DBUSER = 'root'
-# DBPSW = '777888'
-DBPSW = 'hduteacher'
+# DBPSW = '19980416*'
+DBPSW = '123456'
 DEBUG = False
 # DBNAME = 'wx_push_py'
-DBNAME = 'wx_push_py_ky'
+DBNAME = 'wx_push_py_hb'
 # RESGER_URL = 'http://2007796hq5.iask.in/user/register'
-RESGER_URL = 'http://wxpushky.piercingeyes.cn/user/register'
-SUPERUSER_LOGIN_URL = 'http://wxpushky.piercingeyes.cn/login'
+RESGER_URL = 'http://wxpushhb.piercingeyes.cn/user/register'
+SUPERUSER_LOGIN_URL = 'http://wxpushhb.piercingeyes.cn/login'
 # SUPERUSER_LOGIN_URL = 'http://2007796hq5.iask.in/login'
-URL_BASE = 'http://wxpushky.piercingeyes.cn'
+URL_BASE = 'http://wxpushhb.piercingeyes.cn'
+
+HISTORY_EVENT_URL = 'http://wxpushhb.piercingeyes.cn/user/historyEvent'
+FAULT_REPAIR_URL = 'http://wxpushhb.piercingeyes.cn/user/faultRepair'
+SUPER_WARN_URL = 'http://wxpushhb.piercingeyes.cn/super/warn/simulate'
+JUMP_PAGE_URL = 'http://wxpushhb.piercingeyes.cn/app/jumps'
+
+"""这是杭电网站后台"""
+HISTORY_EVENT_HDU_URL = 'http://hdu.piercingeyes.cn/api/historyEvent'
+FAULT_REPAIR_HDU_URL = 'http://hdu.piercingeyes.cn/api/deviceRepair'
+VERIFY_STU_HDU_URL = 'http://hdu.piercingeyes.cn/api/checkStudent'
+HDU_SOURCE_URL = 'http://hdu.piercingeyes.cn/api/studentBind'
+SUPER_REPAIR_URL = 'http://hdu.piercingeyes.cn/api/studentRepair'
+
+"""这是厦门网站大学后台，暂时使用CYKJ的后台，之后需要改动"""
+HISTORY_EVENT_XMU_URL = 'http://cykj.piercingeyes.cn/api/historyEvent'
+FAULT_REPAIR_XMU_URL = 'http://cykj.piercingeyes.cn/api/deviceRepair'
+VERIFY_STU_XMU_URL = 'http://cykj.piercingeyes.cn/api/checkStudent'
+XMU_SOURCE_URL = 'http://cykj.piercingeyes.cn/api/studentBind'
+XMU_SUPER_REPAIR_URL = 'http://cykj.piercingeyes.cn/api/studentRepair'
+
+
+Url_Map = {
+    "HDU":
+    {
+        "SOURCE":1,
+        "HISTORY_EVENT_URL": 'http://hdu.piercingeyes.cn/api/historyEvent',
+        "FAULT_REPAIR_URL" : 'http://hdu.piercingeyes.cn/api/deviceRepair',
+        "VERIFY_STU_URL": 'http://hdu.piercingeyes.cn/api/checkStudent',
+        "SOURCE_URL" : 'http://hdu.piercingeyes.cn/api/studentBind',
+        "SUPER_REPAIR_URL": 'http://hdu.piercingeyes.cn/api/studentRepair'
+    },
+    "XMU":
+        {
+            "SOURCE": 2,
+            "HISTORY_EVENT_URL": 'http://cykj.piercingeyes.cn/api/historyEvent',
+            "FAULT_REPAIR_URL": 'http://cykj.piercingeyes.cn/api/deviceRepair',
+            "VERIFY_STU_URL": 'http://cykj.piercingeyes.cn/api/checkStudent',
+            #"VERIFY_STU_URL": 'http://192.168.1.100:8000/api/checkStudent',
+            "SOURCE_URL": 'http://cykj.piercingeyes.cn/api/studentBind',
+            #"SOURCE_URL": 'http://192.168.1.100:8000/api/studentBind',
+            "SUPER_REPAIR_URL": 'http://cykj.piercingeyes.cn/api/studentRepair'
+        }
+}
+
 MODIFY_INFO_URL = ''
 SUPERUSER_MODIFY_INFO_URL = ''
-ADMIN_TAG = 100
+# 杭州华炳101/台州100
+ADMIN_TAG = 101

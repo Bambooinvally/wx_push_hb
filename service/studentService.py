@@ -1,0 +1,224 @@
+import hashlib
+import json
+import time
+
+from xml.etree import ElementTree as ET
+
+import requests
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, redirect
+
+from app.configutils import getconfig, Project, ACCESS_TOKEN
+from app.models import WxUser, UnconfirmUser, get_or_none, Ammeters, ConfirmedUser, SuperUser
+from app.wxHandler import dispatch_message, handlerSendReparingMessage
+from service.Template import TemplateContent, TemplateIdParams
+from service.utils import ChooseUrl
+from service.wxconfig import WEBURL, APPID, SECTET, GET_OPENID_URL, GET_CODE, SUPERUSER_LOGIN, TEMPLATE_REPAIR_ID
+from service.wxutils import WxMenuUtil, WxMessageUtil, get_access_token, getOpenId
+from urllib import parse
+
+from wx_push import specsetting
+from wx_push.specsetting import SUPERUSER_LOGIN_URL, ADMIN_TAG, HISTORY_EVENT_HDU_URL, FAULT_REPAIR_HDU_URL
+from django.db.models import Q
+
+"""****************学生用户的功能*****************"""
+
+
+def jumppage(request):
+    if request.method == 'GET':
+        print('进入了GET')
+        code = request.GET.get('code', -1)
+        state = request.GET.get('state')
+        print('code', code)
+        print('state', state)
+        if code != -1:
+            user_openId = getOpenId(code)
+            print(user_openId)
+            user = ConfirmedUser.objects.filter(openId=user_openId).first()
+            if user is not None:
+                if state == 'regedit':
+                    return redirect('/user/register?openId=%s' % user_openId)
+                if state == 'get_history':
+                    return redirect('/user/historyEvent?openId=%s' % user_openId)
+                if state == 'repair':
+                    return redirect('/user/faultRepair?openId=%s' % user_openId)
+            else:
+                superuser = SuperUser.objects.filter(openId=user_openId).first()
+                if superuser is not None:
+                    if state == 'regedit':
+                        return redirect('/user/register?openId=%s' % user_openId)
+                    if state == 'get_history':
+                        return redirect('/user/historyEvent?openId=%s' % user_openId)
+                    if state == 'repair':
+                        return redirect('/user/faultRepair?openId=%s' % user_openId)
+                else:
+                    return redirect('/user/register?openId=%s' % user_openId)
+        else:
+            return render_to_response('404.html')
+
+
+def historyEvent(request):
+    """ 学生历史扣分事件+分数 查询 """
+    global ammeter_source
+    if request.method == 'GET':
+        print('进入了GET')
+        user_openId = request.GET.get('openId', -1)
+        print(user_openId)
+        # code = request.GET.get('code', -1)
+        # print('code', code)
+        # if code != -1:
+        #     user_openId = getOpenId(code)
+        #     print(user_openId)
+        if user_openId != -1:
+            # user_openId = "o-XSVwU3K3EvJrtzIXLjYwkBJee8"
+            user = ConfirmedUser.objects.filter(openId=user_openId).first()
+            if user is not None:
+                requestBody = {"ammeter": []}
+                # ammeters = user.ammeter.through.objects.all()
+                ammeters = user.ammeter.all()
+                print(ammeters)
+
+                # TODO *********************此处增加了报警信息和分数查询*********************
+                for ammeter in ammeters:
+                    ammeter_app_code = ammeter.ammeter_app_code
+                    ammeter_sensorId = ammeter.ammeter_sensorId
+                    ammeter_source = ammeter.source_id
+                    ammeter_info = {"ammeter_app_code": ammeter_app_code, "ammeter_sensorId": ammeter_sensorId,
+                                    "ammeter_info_": ammeter.ammeter_info,
+                                    "ammeter_unit": ammeter.ammeter_unit}
+                    requestBody["ammeter"].append(ammeter_info)
+                print(requestBody)
+                print(ammeter_source)
+                url = ChooseUrl(ammeter_source,"HISTORY_EVENT_URL")
+                # todo:这边都要新增一个判断，基于SOURCE_ID来选择路由
+                re = requests.post(url, json=requestBody)
+                re = re.content.decode('utf-8')  # 这是一个string类型
+                re = json.loads(re)  # 将字符串转为字典类型
+                # 合并两个字典
+                data = requestBody.copy()
+                data.update(re)
+                print(data)
+                # return HttpResponse(re.content, content_type="json/html; charset=UTF-8")
+                return render_to_response('history.html', {'data': data})
+                # TODO ****************************END*****************************
+                # for ammeter in ammeters:
+                #     ammeter_app_code = ammeter.ammeters.ammeter_app_code
+                #     ammeter_sensorId = ammeter.ammeters.ammeter_sensorId
+                #     ammeter_info = {"ammeter_app_code":ammeter_app_code,"ammeter_sensorId":ammeter_sensorId}
+                #     requestBody["ammeter"].append(ammeter_info)
+                # print(requestBody)
+                # re = requests.post(HISTORY_EVENT_HDU_URL, json=requestBody)
+                # print(re.content.decode('utf-8'))
+                # 
+                # return HttpResponse(re.content,
+                #                     content_type="json/html; charset=UTF-8")
+            else:
+                superuser = SuperUser.objects.filter(openId=user_openId).first()
+                if superuser is not None:
+                    return redirect('/user/register?openId=%s' % user_openId)
+                else:
+                    return render_to_response('404.html')
+                # return HttpResponse('history.html',
+                #                 content_type="json/html; charset=UTF-8")
+        else:
+            return render_to_response('404.html')
+        # return HttpResponse("error", content_type="json/html; charset=UTF-8")
+
+
+def deduction(ammeter_code, score):
+    """学生危险事件扣分"""
+
+
+def bonus(ammeter_code, score):
+    """学生寝室加分"""
+
+
+def deviceRepair(request):
+    """设备维修"""
+    if request.method == 'POST':
+        print('进入了deviceRepair的POST')
+        """上传保修原因和联系方式"""
+        ammeter_app_code = request.POST.get("ammeter_app_code")
+        ammeter_sensorId = request.POST.get("ammeter_sensorId")
+        phone = request.POST.get("phone")
+        qq = request.POST.get("qq")
+        text = request.POST.get("text")
+        ammeter = Ammeters.objects.get(ammeter_app_code=ammeter_app_code,ammeter_sensorId=ammeter_sensorId)
+        sourceId = ammeter.source_id
+        url = ChooseUrl(sourceId,"FAULT_REPAIR_URL")
+        data = requests.get(url, params={'text': text, 'phone': phone, 'qq': qq,
+                                                          'ammeter_app_code': ammeter_app_code,
+                                                          'ammeter_sensorId': ammeter_sensorId})
+        data = data.content.decode('utf-8')  # 这是一个string类型
+        data = json.loads(data)  # 将字符串转为字典类型
+        print(data)
+        # 这里加入向管理员推送报修通知
+        if data['status'] == '上传成功':
+            # 将通知推送给所属管理员
+            amt = Ammeters.objects.filter(ammeter_app_code=ammeter_app_code, ammeter_sensorId=ammeter_sensorId).first()
+            if amt is not None:
+                source_id = amt.source_id  # 获取项目号
+                domain = amt.domain  # 获取地区
+                # 获取所属管理员
+                superUsers = SuperUser.objects.filter(Q(source_id='all') |
+                                                      (Q(source_id__iregex=('^' + str(
+                                                          source_id) + ',') + '|' + (',' + str(
+                                                          source_id) + ',')
+                                                                           + '|' + (',' + str(source_id) + '$'))
+                                                       & (Q(domain__iregex=('^' + str(
+                                                                  domain) + ',') + '|' +
+                                                                           (',' + str(
+                                                                               domain) + ',')
+                                                                           + '|' + (',' + str(
+                                                                  domain) + '$'))
+                                                          | Q(domain='all'))))
+                access_token = getconfig(ACCESS_TOKEN, "")
+                if superUsers:
+                    template_data = handlerSendReparingMessage(amt.ammeter_unit, amt.ammeter_addr, text)
+                    for user in superUsers:
+                        preparedData = {
+                            "access_token": access_token,
+                            "open_id": user.openId,
+                            "template_id": TEMPLATE_REPAIR_ID,
+                            "template_data": template_data,
+                        }
+                        result = WxMessageUtil.send_repair_message(preparedData["access_token"],
+                                                                   preparedData["open_id"],
+                                                                   preparedData["template_id"],
+                                                                   preparedData["template_data"])
+        return HttpResponse(json.dumps({'status': data.get('status')}), content_type="json/html; charset=UTF-8")
+    elif request.method == 'GET':
+        print('进入了deviceRepair的GET')
+        user_openId = request.GET.get('openId', -1)
+        print(user_openId)
+        # code = request.GET.get('code', -1)
+        # print('code:', code)
+        # if code != -1:
+        #     user_openId = getOpenId(code)
+        #     print(user_openId)
+        if user_openId != -1:
+            user = ConfirmedUser.objects.filter(openId=user_openId).first()
+            if user is not None:
+                print(user.name)
+                requestBody = {"ammeter": []}
+                ammeters = user.ammeter.all()
+                print(ammeters)
+                # TODO *********************此处待修改*********************
+                for ammeter in ammeters:
+                    ammeter_app_code = ammeter.ammeter_app_code
+                    ammeter_sensorId = ammeter.ammeter_sensorId
+                    ammeter_info = {"ammeter_app_code": ammeter_app_code, "ammeter_sensorId": ammeter_sensorId,
+                                    "ammeter_info_": ammeter.ammeter_info,
+                                    "ammeter_unit": ammeter.ammeter_unit}
+                    requestBody["ammeter"].append(ammeter_info)
+                print(requestBody)
+                return render_to_response('repair.html', {'data': requestBody})
+                # TODO ****************************END*****************************
+            else:
+                superuser = SuperUser.objects.filter(openId=user_openId).first()
+                if superuser is not None:
+                    return redirect('/user/register?openId=%s' % user_openId)
+                else:
+                    return render_to_response('404.html')
+        else:
+            return HttpResponse("404.html", content_type="json/html; charset=UTF-8")

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block repair %} active {% endblock %}
+{% load staticfiles %}
+
+{% block diy_style %}
+    <script src="/static/clipboard.js-master/dist/clipboard.min.js"></script>
+{% endblock %}
+
+{% block extlib %}
+    <!--bootstrap table -->
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>
+            <strong>用户报修信息</strong>
+        </h1>
+    </div>
+
+    <div class="alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+        请<strong>确认完成修理</strong>后，再点击<strong>[已处理]</strong>按钮。
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <!--列表-->
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="list-group">
+                        {% for repairinfo in repairinfos %}
+                            <div class="list-group-item">
+                                <div class="list-group-item-text">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p>设备：{{ repairinfo.unit }}号楼 {{ repairinfo.ammeter_info }}室</p>
+                                            {% if repairinfo.repair_info_phone != '' %}
+                                                <p>电话：<span class="phone">{{ repairinfo.repair_info_phone }}</span>
+{#                                                    <button type="button" class="btn btn-default btn-xs copy_phone"#}
+{#                                                            data-phone="{{ repairinfo.repair_info_phone }}">复制#}
+{#                                                    </button>#}
+{#                                                    <button class="btn btn-default btn-xs" data-clipboard-text="{{ repairinfo.repair_info_phone }}">#}
+{#                                                        复制#}
+{#                                                    </button>#}
+                                                    <button class="btn btn-default btn-xs copy_phone" data-clipboard-target=".phone">复制</button>
+                                                </p>
+                                            {% endif %}
+                                            {% if repairinfo.repair_info_qq != '' %}
+                                                <p>QQ：<span class="qq">{{ repairinfo.repair_info_qq }}</span>
+{#                                                    <button type="button" class="btn btn-default btn-xs copy_phone"#}
+{#                                                            data-qq="{{ repairinfo.repair_info_qq }}">复制#}
+{#                                                    </button>#}
+                                                <button class="btn btn-default btn-xs copy_qq" data-clipboard-target=".qq">复制</button>
+                                                </p>
+                                            {% endif %}
+                                            <p>报修信息：{{ repairinfo.repair_info_text }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-offset-8  col-md-4">
+                                            <p>
+                                                <button class="verify-ok btn btn-success"
+                                                        data-id="{{ repairinfo.repair_info_id }}">
+                                                    <span class="glyphicon"> 已处理</span>
+                                                </button>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="weui-cell__bd">
+                                        <input id="repair_id" class="weui-input" type="hidden"
+                                               value="{{ repairinfo.repair_info_id }}">
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('.copy_phone').on('click', function () {
+                var clipboard = new ClipboardJS('.copy_phone');
+                clipboard.on('success', function(e) {
+                    e.clearSelection();
+                    alert('复制成功')
+                    clipboard.destroy();
+                });
+            });
+            $('.copy_qq').on('click', function () {
+                {#var phone = $(this).attr("data-phone");#}
+                {#console.log(phone);#}
+                var clipboard = new ClipboardJS('.copy_qq');
+                clipboard.on('success', function(e) {
+                    alert('复制成功')
+                    e.clearSelection();
+                    clipboard.destroy();
+                });
+            })
+            $('.verify-ok').on('click', function () {
+                var repairId = $(this).attr("data-id");
+                $.ajax({
+                    url: '/super/show/repair',
+                    type: "POST",
+                    async: false,
+                    data: {"repairId": repairId},
+                    success: function (res) {
+                        var data = JSON.parse(res);
+                        if (data.state) {
+                            console.log('ok')
+                            alert('提交成功！')
+                            location.reload();
+                        } else
+                            alert('提交失败！')
+                    }
+                })
+            });
+        })
+    </script>
+    <!-- end of row -->
+{% endblock %}
+
+{#<script type="text/javascript">#}
+{#    {% ifnotequal message '' %}#}
+{#        $('#msgDialog').modal('show');#}
+{#    {% endifnotequal %}#}
+{#    $.validate({#}
+{#        modules: "security"#}
+{#    });#}
+{##}
+{#</script>#}

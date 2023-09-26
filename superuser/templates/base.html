@@ -11,11 +11,14 @@
     <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/3.3.4/js/bootstrap.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/jquery-weui.css' %}"/>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/demo.css' %}"/>
     <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
 {#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
 {#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
     <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+    {% block diy_style %} {% endblock %}
 
 </head>
 <body>
@@ -30,14 +33,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <span class="navbar-brand"><strong>牟眼</strong></span>
+                <span class="navbar-brand"><strong>魔眼</strong></span>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li class="{% block search %} {% endblock %}"><a href="/super/search/user">查询用户信息</a></li>
-                    <li class="{% block verify %} {% endblock %}"><a href="/super/verify/user">审核用户</a>
-                    </li>
+                    <li class="{% block verify %} {% endblock %}"><a href="/super/verify/user">审核用户</a></li>
                     <li class="{% block show %} {% endblock %}"><a href="/super/show/user">已审核用户</a></li>
+                    <li class="{% block repair %} {% endblock %}"><a href="/super/show/repair">设备报修信息</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a>{% block name %} {{ name }} {% endblock %}</a></li>

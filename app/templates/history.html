@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+
+    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/jquery-weui.css' %}"/>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/demo.css' %}"/>
+    <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
+    {#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
+    {#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+    <title>分数查询</title>
+    <style>
+        .weui-cell {
+        {#margin: 0;#} padding: 12px 16px;
+        }
+
+        .flex {
+            width: 33%;
+        }
+    </style>
+</head>
+<body>
+{#{{ data }}#}
+<header class='demos-header'>
+    <h1 class="demos-title">寝室信息</h1>
+</header>
+<div class="bd">
+    <div class="page__bd">
+        <div class="weui-cells__title">总览</div>
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>楼层</p>
+                </div>
+                <div class="weui-cell__ft">{{ data.ammeter.0.ammeter_unit }}号楼</div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>寝室</p>
+                </div>
+                <div class="weui-cell__ft">{{ data.ammeter.0.ammeter_info_ }}</div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>当前寝室功率</p>
+                </div>
+                <div class="weui-cell__ft">{{ data.event.0.power }}W</div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p style="width: 120px">当前用电器</p>
+                </div>
+                <div class="weui-cell__ft">{{ data.event.0.app }}</div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>分数</p>
+                </div>
+                <div class="weui-cell__ft">{{ data.score }}</div>
+            </div>
+        </div>
+        <div class="weui-cells__title">扣分明细</div>
+        <div class="weui-cells">
+            <div class="weui-cell" style="display: flex">
+                <div class="flex">类型</div>
+                <div class="flex text-center">扣分</div>
+                <div class="flex text-center">时间</div>
+                <div class="flex text-right">备注</div>
+            </div>
+            {% if data.event.0.dangerList == None %}
+                    <div class="text-center" style="font-size: smaller">没有扣分记录</div>
+            {% endif %}
+            {% for item in data.event.0.dangerList %}
+                <div class="weui-cell" style="display: flex; font-size: smaller">
+                    <div class="flex">{{ item.event_type }}</div>
+                    <div class="flex text-center" style="color: red">-{{ item.event_score }}</div>
+                    <div class="flex text-center">{{ item.event_time }}</div>
+                    <div class="flex text-right">{{ item.event_value }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        const initData = {{ data|safe }}
+            console.log(initData)
+    </script>
+</body>
+</html>

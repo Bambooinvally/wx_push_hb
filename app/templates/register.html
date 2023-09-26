@@ -6,13 +6,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     {% load staticfiles %}
 
-        <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet">
+    <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/jquery-weui.css' %}"/>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/demo.css' %}"/>
     <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
-{#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
-{#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
+    {#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
+    {#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
     <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
     <title>设备绑定</title>
@@ -35,86 +37,117 @@
     </style>
 </head>
 <body>
-<div class="container" id="container">
-    <div class="page home js_show">
-        <!-- 头部 -->
-        <div class="page__hd">
+{% if status == 'wait' %}
+    <div class="weui-msg" id="waiting">
+        <div class="weui-msg__icon-area"><i class="weui-icon-waiting weui-icon_msg"></i></div>
+        <div class="weui-msg__text-area">
+            <h2 class="weui-msg__title">审核中</h2>
+            <p class="weui-msg__desc" id="waiting_text">请耐心等待管理员审核</p>
         </div>
-        <!-- 主体 -->
-        <div class="page__bd page__bd_spacing">
-            <div class="weui-form">
-                <div class="weui-form__text-area">
-                    <h2 class="weui-form__title">认证信息</h2>
-                </div>
-                <div class="weui-form__control-area">
-                    <div class="weui-cells__group weui-cells__group_form">
-                        <!--<div class="weui-cells__title">表单组标题</div>-->
-                        <div class="weui-cells weui-cells_form">
-                            <div class="weui-cell">
-                                <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
-                                <div class="weui-cell__bd">
-                                    <input id="name" class="ipt weui-input" placeholder="填写本人姓名" name="name">
+    </div>
+{% elif status == 'checked' %}
+    <div class="weui-msg" id="success">
+        <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+        <div class="weui-msg__text-area">
+            <h2 class="weui-msg__title">审核通过</h2>
+            <p class="weui-msg__desc" id="success_text1">您的注册申请已审核通过</p>
+            <p class="weui-msg__desc" id="success_text2">如需更换设备，请联系区域管理员</p>
+        </div>
+    </div>
+{% elif status == 'uncheck' %}
+    <div class="container" id="container">
+        <div class="page home js_show">
+            <!-- 头部 -->
+            <div class="page__hd">
+            </div>
+            <!-- 主体 -->
+            <div class="page__bd page__bd_spacing">
+                <div class="weui-form">
+                    <div class="weui-form__text-area">
+                        <h2 class="weui-form__title">认证信息</h2>
+                    </div>
+                    <div class="weui-form__control-area">
+                        <div class="weui-cells__group weui-cells__group_form">
+                            <!--<div class="weui-cells__title">表单组标题</div>-->
+                            <div class="weui-cells weui-cells_form">
+
+                                <div class="page">
+
+                                    {#                            <div class="weui-cell">#}
+                                    {#                                <div class="weui-cell__hd"><label class="weui-label">地址</label></div>#}
+                                    {#                                <div class="weui-cell__bd">#}
+                                    {#                                    <input id="addr" class="ipt weui-input" placeholder="填写绑定的地址" type="text">#}
+                                    {#                                </div>#}
+                                    {#                            </div>#}
+                                    <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after">
+                                        <div class="weui-cell__hd"><label class="weui-label">安装地区</label></div>
+                                        <div class="weui-cell__bd" id="showPicker">请点击选择</div>
+                                    </div>
+                                    <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after hidden">
+                                        <div class="weui-cell__hd"><label class="weui-label">绑定设备</label></div>
+                                        <div class="weui-cell__bd " id="showDevice">请点击选择</div>
+                                    </div>
+
+                                    <div class="weui-cell hidden" id="name-cell">
+                                        <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
+                                        <div class="weui-cell__bd">
+                                            <input id="name" class="ipt weui-input" placeholder="填写本人姓名" name="name">
+                                        </div>
+                                    </div>
+                                    <div class="weui-cell hidden" id="phone-cell">
+                                        <div class="weui-cell__hd"><label class="weui-label">手机号</label></div>
+                                        <div class="weui-cell__bd">
+                                            <input id="phone" class="ipt weui-input" placeholder="填写本人手机号" name="phone"
+                                                   type="number"
+                                                   pattern="[0-9]*">
+                                        </div>
+                                    </div>
+                                    <div class="weui-cell hidden" id="student-cell">
+                                        <div class="weui-cell__hd"><label class="weui-label">学号</label></div>
+                                        <div class="weui-cell__bd">
+                                            <input id="code" class="ipt weui-input" placeholder="填写本人学号" name="code"
+                                                   type="text"
+                                                   pattern="[0-9]*">
+                                        </div>
+                                    </div>
+
+                                    <div class="weui-cell__bd">
+                                        <input id="open_id" class="weui-input" type="hidden" value="{{ openId }}">
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input id="source_id" class="weui-input" type="hidden" value="">
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input id="distination" class="weui-input" type="hidden" value="">
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <input id="board_id" class="weui-input" type="hidden" value="">
+                                    </div>
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <div class="weui-form__opr-area">
+                                        <a class="weui-btn weui-btn_primary weui-btn_disabled" href="javascript:"
+                                           id="showTooltips">确定</a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="weui-cell">
-                                <div class="weui-cell__hd"><label class="weui-label">手机号</label></div>
-                                <div class="weui-cell__bd">
-                                    <input id="phone" class="ipt weui-input" placeholder="填写本人手机号" name="phone"
-                                           type="number"
-                                           pattern="[0-9]*">
-                                </div>
-                            </div>
-
-                            <div class="page">
-
-{#                            <div class="weui-cell">#}
-{#                                <div class="weui-cell__hd"><label class="weui-label">地址</label></div>#}
-{#                                <div class="weui-cell__bd">#}
-{#                                    <input id="addr" class="ipt weui-input" placeholder="填写绑定的地址" type="text">#}
-{#                                </div>#}
-{#                            </div>#}
-                            <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after">
-                                <div class="weui-cell__hd"><label class="weui-label">安装地区</label></div>
-                                <div class="weui-cell__bd" id="showPicker">请点击选择</div>
-                            </div>
-                            <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after hidden">
-                                <div class="weui-cell__hd"><label class="weui-label">绑定设备</label></div>
-                                <div class="weui-cell__bd " id="showDevice">请点击选择</div>
-                            </div>
-
-                            <div class="weui-cell__bd">
-                                <input id="open_id"  class="weui-input" type="hidden" value="">
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input id="source_id"  class="weui-input" type="hidden" value="">
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input id="board_id"  class="weui-input" type="hidden" value="">
-                            </div>
-                            <br>
-                            <br>
-                            <br>
-                            <div class="weui-form__opr-area">
-                                <a class="weui-btn weui-btn_primary weui-btn_disabled" href="javascript:"
-                                   id="showTooltips">确定</a>
                             </div>
                         </div>
                     </div>
+                    <div id="js_toast" style="opacity: 0; display: none;">
+                        <div class="weui-mask_transparent"></div>
+                        <div class="weui-toast">
+                            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+                            <p class="weui-toast__content">已完成</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div id="js_toast" style="opacity: 0; display: none;">
-                <div class="weui-mask_transparent"></div>
-                <div class="weui-toast">
-                    <i class="weui-icon-success-no-circle weui-icon_toast"></i>
-                    <p class="weui-toast__content">已完成</p>
-                </div>
+                <!-- 尾部 -->
+                <div class="page__ft"></div>
             </div>
         </div>
-        <!-- 尾部 -->
-        <div class="page__ft"></div>
     </div>
-</div>
-</div>
+{% endif %}
 
 <script type="text/javascript" class="form_page js_show">
     $(function () {
@@ -130,17 +163,21 @@
         $('#showTooltips').on('click', function () {
             if ($(this).hasClass('weui-btn_disabled')) return;
             else {
-                console.log($('#open_id').val());
+                console.log('openId', $('#open_id').val());
                 $.ajax({
                     url: '/user/register',
                     type: 'post',
-                    dataType:'json',
-                    data: { 'name': $('#name').val(),
-                            'phone': $('#phone').val(),
-                            'address': $('#addr').val(),
-                            'openId': $('#open_id').val(),
-                            'source_id':$('#source_id').val(),
-                            'board_id':$('#board_id').val()},
+                    dataType: 'json',
+                    data: {
+                        'name': $('#name').val(),
+                        'phone': $('#phone').val(),
+                        'code': $('#code').val(),
+                        'address': $('#addr').val(),
+                        'openId': $('#open_id').val(),
+                        'source_id': $('#source_id').val(),
+                        'distination': $('#distination').val(),
+                        'board_id': $('#board_id').val()
+                    },
                     success: function (res) {
                         alert(res.statue)
                     }
@@ -156,7 +193,9 @@
     });
 </script>
 <script>
-    var ammeters=[];
+    var ammeters = [];
+    var source_id = null;
+
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
@@ -165,88 +204,92 @@
     }
 
     //前端获取code，返回给后端获得openid
-    $(function () {
-        var code = getQueryString("code");
-        if (code != null) {
-            $.ajax({
-                url: '/app/params',
-                type: 'post',
-                dataType: 'json',
-                data: {'code' : code},
-                success: function (res) {
-                        $('#open_id').val(res.openid);
-                        console.log(res);
-                }
-
-            })
-        } else {
-            alert("请使用微信访问")
-        }
-    })
-
+    {#$(function () {#}
+    {#    var code = getQueryString("code");#}
+    {#    if (code != null) {#}
+    {#        $.ajax({#}
+    {#            url: '/app/params',#}
+    {#            type: 'post',#}
+    {#            dataType: 'json',#}
+    {#            data: {'code': code},#}
+    {#            success: function (res) {#}
+    {#                $('#open_id').val(res.openid);#}
+    {#                console.log(res);#}
+    {#            }#}
+    {##}
+    {#        })#}
+    {#    } else {#}
+    {#        alert("请使用微信访问")#}
+    {#    }#}
+    {# })#}
 
     $('#showPicker').on('click', function () {
-    var lst = [
-    {% for provinces in data %}
-    {% for province,cities in provinces.items%}
-    {
-	        label: '{{ province }}',
-	        value: '{{ province }}',
-	        children: [
-            {% for city,projects in cities.items %}
-            {
-	            label: '{{ city }}',
-	            value: '{{ city }}',
+        var lst = [
+            {% for provinces in data %}
+                {% for province,cities in provinces.items%}
+                    {
+                        label: '{{ province }}',
+                        value: '{{ province }}',
+                        children: [
+                            {% for city,projects in cities.items %}
+                                {
+                                    label: '{{ city }}',
+                                    value: '{{ city }}',
 
-	            children: [
-                 {% for project in projects|first %}
-                 {% for k,v in project.items %}
-                {
-	                label: '{{ v }}',
-	                value: {{ k }}
-	            },
-                    {% endfor %}
+                                    children: [
+                                        {% for project in projects|first %}
+                                            {% for k,v in project.items %}
+                                                {
+                                                    label: '{{ v }}',
+                                                    value: {{ k }}
+                                                },
+                                            {% endfor %}
+                                        {% endfor %}
+                                    ]
+                                },
+                            {% endfor %}
+                        ]
+                    },
                 {% endfor %}
-                ]
-	        },
             {% endfor %}
-            ]
-    },
-        {% endfor %}
-{% endfor %}
-    ];
+        ];
+        console.log(lst)
 
-    weui.picker(lst, {
-	        depth: 3,
-	        defaultValue: [0, 1, 1],
-	        onChange: function onChange(result) {
-	            console.log(result);
-	        },
-	        onConfirm: function onConfirm(result) {
-	            //alert(result)
-	            $('#showPicker').html(result[2].label);
+        weui.picker(lst, {
+            depth: 3,
+            defaultValue: [0, 1, 1],
+            onChange: function onChange(result) {
+            },
+            onConfirm: function onConfirm(result) {
+                $('#showPicker').html(result[2].label);
                 $('#source_id').val(result[2].value);
+                console.log(result[2])
                 selectAmmeter(result[2].value)
-	        },
-	        id: 'cascadePicker',
-	        title: '选择安装地点'
-	    });
-});
-    
+                source_id = result[2].value
+            },
+            id: 'cascadePicker',
+            title: '选择安装地点'
+        });
+    });
+
     function selectAmmeter(source_id) {
         $.ajax({
             url: '/get/ammeters',
             type: 'post',
-            dataType:'json',
-            data: { 'source_id': source_id},
+            dataType: 'json',
+            data: {'source_id': source_id},
             success: function (data) {
-                for (var i=0;i<data.length;i++)
-                {
-                    var temp = {label:data[i].addr,
-                            value:data[i].ammeter_app_code}
-                    ammeters.push(temp)
-                }
+                ammeters = data
                 $('#showDevice').parent().removeClass('hidden');
+                if (source_id !== 0 ) {
+                    $('#name-cell').removeClass('hidden');
+                    $('#student-cell').removeClass('hidden');
+                    $('#phone-cell').addClass('hidden');
+                } else {
+                    $('#name-cell').removeClass('hidden');
+                    $('#student-cell').addClass('hidden');
+                    $('#phone-cell').removeClass('hidden');
+                }
             }
         })
     }
@@ -257,9 +300,10 @@
                 console.log(result);
             },
             onConfirm: function (result) {
-                //console.log(result);
-                $('#showDevice').html(result[0].label)
-                $('#board_id').val(result[0].value)
+                console.log(result)
+                $('#showDevice').html(result[0].label + result[1].label + result[2].label)
+                $('#board_id').val(result[2].value)
+                $('#distination').val(result[0].label + result[1].label + result[2].label)
                 $('#showTooltips').removeClass('weui-btn_disabled');
             },
             title: '选择设备'

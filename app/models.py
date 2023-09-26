@@ -10,7 +10,7 @@ class Config(models.Model):
     textValue = models.TextField(null=True)
     value = models.CharField(max_length=255, null=True)
     valueAttached = models.CharField(max_length=255, null=True)
-    
+
     class Meta:
         db_table = 'Config'
 
@@ -29,16 +29,16 @@ class WxUser(models.Model):
     subscribe = models.BooleanField()  # 是否订阅，1为订阅
     subscribe_scene = models.CharField(max_length=50, null=True, blank=True)  # 订阅场景
     ammeter_id = models.BigIntegerField(null=True, blank=True)  # ammeter的id号
-    
+
     # 需要重建额外信息
     name = models.CharField("注册时的名字", max_length=100, null=True, blank=True)
     phone = models.CharField("注册时的手机", max_length=100, null=True, blank=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
-    
+
     source_id = models.IntegerField("source的外键", null=True)
     vaild = models.NullBooleanField("是否注销", default=False)
-    
+
     class Meta:
         db_table = 'wxUser'
 
@@ -52,10 +52,10 @@ class Menu(models.Model):
     media_id = models.CharField(null=True, blank=True, max_length=255)
     appid = models.CharField(null=True, blank=True, max_length=100)
     pagepath = models.TextField(null=True, blank=True)
-    
+
     class Meta:
         db_table = 'menu'
-    
+
     """
     1、click：点击推事件用户点击click类型按钮后，微信服务器会通过消息接口推送消息类型为event的结构给开发者（参考消息接口指南），并且带上按钮中开发者填写的key值，开发者可以通过自定义的key值与用户进行交互；
     2、view：跳转URL用户点击view类型按钮后，微信客户端将会打开开发者在按钮中填写的网页URL，可与网页授权获取用户基本信息接口结合，获得用户基本信息。
@@ -79,7 +79,7 @@ class URLSource(models.Model):
     url = models.CharField(max_length=255, null=True)
     desc = models.CharField(max_length=100, null=True)
     vaild = models.BooleanField()
-    
+
     class Meta:
         db_table = 'urlsource'
 
@@ -99,61 +99,72 @@ class Project(models.Model):
 
 class Ammeters(models.Model):
     """项目对应的各个设备"""
-    source = models.ForeignKey('Project',to_field='source_id',on_delete=models.CASCADE)
+    source = models.ForeignKey('Project', to_field='source_id', on_delete=models.CASCADE)
     domain = models.CharField(max_length=100, default=0)  # 所属项目下的那个区域
-    ammeter_app_code = models.IntegerField()  # 对应项目下的设备编号
     ammeter_addr = models.CharField(max_length=255)  # 安装地点
-    coordinate = models.CharField(max_length=100)
+    coordinate = models.CharField(max_length=100, null=True)
+    ammeter_app_code = models.CharField(max_length=255)
+    ammeter_sensorId = models.CharField(max_length=255, null=True)  # 传感器号
+    ammeter_info = models.CharField(max_length=255, null=True)  # 地点信息
+    ammeter_unit = models.CharField(max_length=255, null=True)  # 楼号
+
     class Meta:
         db_table = 'ammeters'
 
 
 class UnconfirmUser(models.Model):
-    openId = models.CharField("微信的openid", max_length=255,unique=True)
+    openId = models.CharField("微信的openid", max_length=255, unique=True)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
-    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
+    code = models.CharField(null=True, blank=True, max_length=100)  # 学号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
+    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
 
     # 需要添加的额外信息
     createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
     ammeter = models.ManyToManyField('Ammeters')
-    
+
     class Meta:
-        db_table = 'unconfirmUser'
+        db_table = 'unconfirmuser'
 
 
 class ConfirmedUser(models.Model):
-    openId = models.CharField("微信的openid", max_length=255,unique=True)
+    openId = models.CharField("微信的openid", max_length=255, unique=True)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
-    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
+    code = models.CharField(null=True, blank=True, max_length=100)  # 学号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
+    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
 
     # 需要添加的额外信息
     createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
     ammeter = models.ManyToManyField('Ammeters')
+    apppush = models.BooleanField(default=True)  # 默认开启用电器接入/移除提醒
+    nightpush = models.BooleanField(default=False)  # 默认关闭夜间(23:00-6:00)推送
 
     class Meta:
         db_table = 'confirmedUser'
 
 
 class SuperUser(models.Model):
-    openId = models.CharField("微信的openid", max_length=255,unique=True)
+    openId = models.CharField("微信的openid", max_length=255, unique=True)
     name = models.CharField(null=True, blank=True, max_length=100)  # 姓名
-    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
+    code = models.CharField(null=True, blank=True, max_length=100)  # 学号
     address = models.CharField(null=True, blank=True, max_length=255)  # 需要推送的地址
+    phone = models.CharField(null=True, blank=True, max_length=100)  # 手机号
 
     # 需要添加的额外信息
     createTime = models.DateTimeField(auto_now=True)
     IDcard = models.CharField("注册时的身份证", max_length=255, null=True, blank=True)
     extraInfo = models.CharField(max_length=255, null=True, blank=True)  # 若有多个使用逗号隔开
-    source_id = models.CharField(max_length=255,null=True)  # 可管理的工程
-    domain = models.CharField(max_length=255,null=True)  # 可管理的工程细分
+    source_id = models.CharField(max_length=255, null=True)  # 可管理的工程
+    domain = models.CharField(max_length=255, null=True)  # 可管理的工程细分
+
     class Meta:
         db_table = 'superUser'
+
 
 class PushHistory(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -162,8 +173,11 @@ class PushHistory(models.Model):
     massage = models.CharField(max_length=512)
     pushtime = models.DateTimeField(auto_now=True)
     type = models.CharField(max_length=100)
+    isPush = models.BooleanField(default=True)
+
     class Meta:
         db_table = 'pushhistory'
+
 
 def get_or_none(model, *args, **kwargs):
     try:

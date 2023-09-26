@@ -14,8 +14,13 @@ from service.wxutils import WxMessageUtil
 
 logger = logging.getLogger(__name__)
 
+
+hduUrl = "http://hdu.piercingeyes.cn/api/ammeterlist.json"
+
+xmuUrl = "http://cykj.piercingeyes.cn/api/ammeterlist_xmu.json"
+# xmuUrl = "http://192.168.1.100:8000/api/ammeterlist_xmu.json"
 def syncbd():
-    url = 'http://tzdpc.piercingeyes.cn/api/ammeterlist.json'
+    url = xmuUrl
     re = requests.get(url)
     data = json.loads(re.content.decode('utf-8'))
     device_cnt=0
@@ -44,10 +49,13 @@ def syncbd():
     for ammeter in data['data']:
         default = {
             "ammeter_app_code": ammeter['ammeter_app_code'],
-            "ammeter_addr": ammeter['location'] if ammeter['location'] is not None else '--',
-            "domain": ammeter['ammeter_distination']  # 原来的单元号，电瓶车项目的板子号
+            "ammeter_info": ammeter['ammeter_info'] if ammeter['ammeter_info'] is not None else '--',
+            "ammeter_sensorId": ammeter['ammeter_distination'],  # 原来的单元号，电瓶车项目的板子号
+            "ammeter_unit" : ammeter['ammeter_unit'],
+            "ammeter_addr" : ammeter['ammeter_info'] if ammeter['ammeter_info'] is not None else '--',
+            "source_id": source_id
         }
-        amt,isnew=Ammeters.objects.update_or_create(source_id=source_id,ammeter_app_code=ammeter['ammeter_app_code'],defaults=default)
+        amt,isnew=Ammeters.objects.update_or_create(ammeter_sensorId=ammeter['ammeter_distination'],ammeter_app_code=ammeter['ammeter_app_code'],defaults=default)
         if isnew:
             device_cnt += 1
 

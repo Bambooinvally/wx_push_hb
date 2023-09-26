@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-md-5 col-md-offset-3">
                     <p class="text-muted">
-                        <small>输入部分手机号的时候，按前缀匹配， 如输入15则查询以15开头的手机号</small>
+                        <small>输入部分学号的时候, 按前缀匹配, 如输入20则查询以20开头的学号</small>
                     </p>
                     <form action="/super/search/user" method="POST">
                         <div class="input-group">
@@ -31,17 +31,17 @@
                                 </button>
                             </span>
                         </div>
-                        {% if  request.POST.qtype == 'phone' %}
+                        {% if  request.POST.qtype == 'code' %}
                             <label class="radio-inline"> <input type="radio" name="qtype" value="name"
                                                                 > 姓名</label>
-                            <label class="radio-inline"> <input type="radio" name="qtype" value="phone" checked="checked">
-                                手机号
+                            <label class="radio-inline"> <input type="radio" name="qtype" value="code" checked="checked">
+                                学号
                             </label>
                         {% else %}
                             <label class="radio-inline"> <input type="radio" name="qtype" value="name"
                                                                 checked="checked"> 姓名</label>
-                            <label class="radio-inline"> <input type="radio" name="qtype" value="phone">
-                                手机号
+                            <label class="radio-inline"> <input type="radio" name="qtype" value="code">
+                                学号
                             </label>
                         {% endif %}
 
@@ -60,15 +60,18 @@
                                             <p>姓名：{{ user.name }}</p>
                                         </div>
                                         <div class="col-md-4">
-                                            <p>手机号：{{ user.phone }}</p>
+                                            <p>学号：{{ user.code }}</p>
                                         </div>
-                                        <div class="col-md-4">
-                                            <p>身份证：{{ user.IDcard }}</p>
-                                        </div>
+{#                                        <div class="col-md-4">#}
+{#                                            <p>身份证：{{ user.IDcard }}</p>#}
+{#                                        </div>#}
                                     </div>
                                     <div class="row">
                                         <div class="col-md-10">
-                                            <p>地址：{{ user.address }}</p>
+{#                                            <p>绑定设备：{{ user.address }}</p>#}
+                                            {% for data in user.ammeter.values %}
+                                                <p>绑定设备：{{ data.ammeter_addr }}(设备号{{ data.ammeter_app_code }})</p>
+                                            {% endfor %}
                                         </div>
                                         <input type="hidden" value="{{ user.openId }}"/>
                                     </div>

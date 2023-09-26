@@ -6,62 +6,170 @@
     <!--bootstrap table -->
 {% endblock %}
 
+{% block diy_style %}
+<style>
+    .weui-cell {
+    {#margin: 0;#} padding: 12px 16px;
+    }
+
+    .flex {
+        width: 33%;
+    }
+</style>
+{% endblock %}
 {% block content %}
     <div class="page-header">
         <h1>
-            <strong>用户信息详情</strong>
+            <strong>用户信息</strong>
         </h1>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <!--列表-->
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <form action="/super/modify/user/?pk={{ request.GET.pk }}" method="post">
-                        <div class="row ">
-                            <div class="col-md-4">
-                                <span class="input-group-addon">姓名</span>
-                                <input type="text" class="form-control" placeholder="必填" name="name"
-                                       value="{{ user.name }}" >
-                            </div>
-                            <div class="col-md-4">
-                                <span class="input-group-addon">手机号</span>
-                                <input type="text" class="form-control" placeholder="必填" name="phone"
-                                       value="{{ user.phone }}" >
-                            </div>
-                            <div class="col-md-4">
-                                <span class="input-group-addon">身份证</span>
-                                <input type="text" class="form-control" placeholder="必填" name="IDcard"
-                                       value="{{ user.IDcard }}" >
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <span class="input-group-addon">openId</span>
-                                <input type="text" disabled="disabled" class="form-control" name="openId"
-                                       value="{{ user.openId }}" >
-                            </div>
-                            <div class="col-md-6">
-                                <span class="input-group-addon">地址</span>
-                                <input type="text" class="form-control" placeholder="必填" name="address"
-                                       value="{{ user.address }}" >
-                            </div>
+{#    <div class="panel panel-default">#}
+{#        <div class="panel-body">#}
+{#            <!--列表-->#}
+{#            <div class="row">#}
+{#                <div class="col-md-8 col-md-offset-2">#}
+{#                    <form action="/super/modify/user/?pk={{ request.GET.pk }}" method="post">#}
+{#                        <div class="row ">#}
+{#                            <div class="col-md-4">#}
+{#                                <span class="input-group-addon">姓名</span>#}
+{#                                <input type="text" class="form-control" placeholder="未查询到姓名" name="name"#}
+{#                                       value="{{ user.name }}" disabled>#}
+{#                            </div>#}
+{#                            <div class="col-md-4">#}
+{#                                <span class="input-group-addon">学号</span>#}
+{#                                <input type="text" class="form-control" placeholder="未查询到学号" name="phone"#}
+{#                                       value="{{ user.code }}" disabled>#}
+{#                            </div>#}
+{#                            <div class="col-md-4">#}
+{#                                <span class="input-group-addon">寝室</span>#}
+{#                                <input type="text" class="form-control" placeholder="未查询到寝室" name="IDcard"#}
+{#                                       value="{{ data.ammeter.0.ammeter_unit }}号楼 {{ data.ammeter.0.ammeter_info_ }}" >#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <br>#}
+{#                        <div class="row">#}
+{#                            <div class="col-md-6">#}
+{#                                <span class="input-group-addon">openId</span>#}
+{#                                <input type="text" disabled="disabled" class="form-control" name="openId"#}
+{#                                       value="{{ user.openId }}" >#}
+{#                            </div>#}
+{#                            <div class="col-md-6">#}
+{#                                <span class="input-group-addon">地址</span>#}
+{#                                <input type="text" class="form-control" placeholder="必填" name="address"#}
+{#                                       value="{{ user.address }}" >#}
+{#                            </div>#}
+{##}
+{#                        </div>#}
+{#                        <br>#}
+{#                        <div class="row">#}
+{#                            <div class="col-md-offset-5">#}
+{#                                <input type="submit" value="修改" class="btn btn-success">#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
 
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells__title">学生</div>
+            <form action="/super/modify/user/?pk={{ request.GET.pk }}" method="post">
+                <div class="weui-cells">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>姓名</p>
                         </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-offset-5">
-                                <input type="submit" value="修改" class="btn btn-success">
-                            </div>
+                        <div class="weui-cell__ft">{{ user.name }}</div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>学号</p>
                         </div>
-                    </form>
+                        <div class="weui-cell__ft">{{ user.code }}</div>
+                    </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>楼层</p>
+                    </div>
+                    <div class="weui-cell__ft">{{ data.ammeter.0.ammeter_unit }}号楼</div>
                 </div>
-            </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>寝室</p>
+                    </div>
+                    <div class="weui-cell__ft">{{ data.ammeter.0.ammeter_info_ }}</div>
+                </div>
+                </div>
+            </form>
         </div>
     </div>
 
+    <div class="page-header">
+        <h1>
+            <strong>寝室信息</strong>
+        </h1>
+    </div>
+
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells__title">总览</div>
+            <div class="weui-cells">
+{#                <div class="weui-cell">#}
+{#                    <div class="weui-cell__bd">#}
+{#                        <p>楼层</p>#}
+{#                    </div>#}
+{#                    <div class="weui-cell__ft">{{ data.ammeter.0.ammeter_unit }}号楼</div>#}
+{#                </div>#}
+{#                <div class="weui-cell">#}
+{#                    <div class="weui-cell__bd">#}
+{#                        <p>寝室</p>#}
+{#                    </div>#}
+{#                    <div class="weui-cell__ft">{{ data.ammeter.0.ammeter_info_ }}</div>#}
+{#                </div>#}
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>当前寝室功率</p>
+                    </div>
+                    <div class="weui-cell__ft">{{ data.event.0.power }}W</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p style="width: 120px">当前用电器</p>
+                    </div>
+                    <div class="weui-cell__ft">{{ data.event.0.app }}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>分数</p>
+                    </div>
+                    <div class="weui-cell__ft">{{ data.score }}</div>
+                </div>
+            </div>
+            <div class="weui-cells__title">扣分明细</div>
+            <div class="weui-cells">
+                <div class="weui-cell" style="display: flex">
+                    <div class="flex">类型</div>
+                    <div class="flex text-center">扣分</div>
+                    <div class="flex text-center">时间</div>
+                    <div class="flex text-right">备注</div>
+                </div>
+                {% if data.event.0.dangerList == None %}
+                        <div class="text-center" style="font-size: smaller">没有扣分记录</div>
+                {% endif %}
+                {% for item in data.event.0.dangerList %}
+                    <div class="weui-cell" style="display: flex; font-size: smaller">
+                        <div class="flex">{{ item.event_type }}</div>
+                        <div class="flex text-center" style="color: red">-{{ item.event_score }}</div>
+                        <div class="flex text-center">{{ item.event_time }}</div>
+                        <div class="flex text-right">{{ item.event_value }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
     <!-- end of row -->
 {% endblock %}
 

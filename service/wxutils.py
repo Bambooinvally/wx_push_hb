@@ -6,8 +6,7 @@ import requests
 
 from app.models import ConfirmedUser, Ammeters, get_or_none
 from service.Template import TemplateIdParams, TemplateContent
-from service.wxconfig import TEMPLATEMAP, APPID, SECTET
-
+from service.wxconfig import TEMPLATEMAP, APPID, SECTET, GET_OPENID_URL
 
 #  'appid': 'wx179a6296f724d40f'
 from wx_push.specsetting import URL_BASE
@@ -26,6 +25,13 @@ def get_access_token():
     access_token = msg.get("access_token", "")
     expires_in = msg.get("expires_in", 7200)
     return (access_token, expires_in)
+
+
+def getOpenId(code):
+    req = requests.get(GET_OPENID_URL % code)
+    msg = json.loads(req.content.decode())
+    user_openId = msg.get('openid', '')
+    return user_openId
 
 
 class News:
@@ -117,10 +123,14 @@ class WxMessageUtil:
         else:
             miniPorgramParams = miniPorgramParams.__dict__
         # print('device:', str(device).split('app_code_id:'))
-        device_data = str(device).split('app_code_id:')
-        sourceId = device_data[0].split(':')[1]
-        ammeterId = device_data[1]
-        ammeter = get_or_none(Ammeters,source_id=sourceId, ammeter_app_code=ammeterId)
+        # device_data = str(device).split('app_code_id:')
+        # sourceId = device_data[0].split(':')[1]
+        # ammeterId = device_data[1]
+        # ammeter = get_or_none(Ammeters, source_id=sourceId, ammeter_app_code=ammeterId)
+        ammeter = device
+        sourceId = device.source_id
+        ammeterId = device.ammeter_app_code
+        distination = device.ammeter_sensorId
         if ammeter is None:
             coordinate = ''
         else:
@@ -128,22 +138,89 @@ class WxMessageUtil:
             ammeter_addr = ammeter.ammeter_addr
         keyWords = template_data.getKeywords()
         # print('keywords:',keyWords)
+        try:
+            if str(keyWords[0]['value']) == '用电器接入提醒' or str(keyWords[0]['value']) == '用电器移除提醒':
+                re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
+                                   params={"access_token": access_token},
+                                   data=json.dumps({
+                                       "touser": openId,
+                                       "template_id": templateId,
+                                       "data": template_data.__dict__
+                                   }))
+            else:
+                re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
+                                   params={"access_token": access_token},
+                                   data=json.dumps({
+                                       "touser": openId,
+                                       "template_id": templateId,
+                                       "url": URL_BASE + '/super/warn/detail' +
+                                              "?location=" + str(keyWords[1]['value']) +
+                                              "&warn_content=" + str(keyWords[0]['value']) + '(' + str(
+                                           keyWords[2]['value']) + ')' +
+                                              "&warn_level=" + str(keyWords[3]['value']) +
+                                              "&source_id=" + str(sourceId) +
+                                              "&ammeterid=" + str(ammeterId) +
+                                              "&distination=" + str(distination) +
+                                              "&hash=" + str(openId) +
+                                              "&coord=" + str(coordinate),
+                                       # "topcolor": "#FF0000",
+                                       # "miniprogram": miniPorgramParams,
+                                       "data": template_data.__dict__
+                                   }))
+        except Exception as e:
+            return '推送失败'
+        finally:
+            print('进入定向推送')
+            return re.content
+
+    @staticmethod
+    def send_reg_message(access_token, openId, templateId, miniPorgramParams, template_data):
+        """
+        注册状态推送消息
+        :param access_token:
+        :param openId:
+        :param templateId:
+        :param miniPorgramParams:
+        :param template_data:
+        :return:
+        """
+        print('进入注册状态推送')
+        if miniPorgramParams is None:
+            miniPorgramParams = ""
+        else:
+            miniPorgramParams = miniPorgramParams.__dict__
+        keyWords = template_data.getKeywords02()
         re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
                            params={"access_token": access_token},
                            data=json.dumps({
                                "touser": openId,
                                "template_id": templateId,
-                               "url": URL_BASE + '/super/warn/detail' +
-                                "?location=" + str(keyWords[1]['value']) +
-                               "&warn_content=" + str(keyWords[0]['value']) + '(' +str(keyWords[2]['value'])+')'+
-                               "&warn_level=" + str(keyWords[3]['value']) +
-                               "&source_id=" + sourceId +
-                               "&ammeterid=" + ammeterId +
-                               "&coord=" + str(coordinate),
-                               # "topcolor": "#FF0000",
-                               # "miniprogram": miniPorgramParams,
+                               "url": '',
                                "data": template_data.__dict__
                            }))
+        print('注册状态推送成功')
+        return re.content
+
+    @staticmethod
+    def send_repair_message(access_token, openId, templateId, template_data):
+        """
+        注册状态推送消息
+        :param access_token:
+        :param openId:
+        :param templateId:
+        :param template_data:
+        :return:
+        """
+        print('进入报修推送')
+        re = requests.post("https://api.weixin.qq.com/cgi-bin/message/template/send",
+                           params={"access_token": access_token},
+                           data=json.dumps({
+                               "touser": openId,
+                               "template_id": templateId,
+                               "url": '',
+                               "data": template_data.__dict__
+                           }))
+        print('报修推送成功')
         return re.content
 
     @staticmethod
@@ -334,11 +411,11 @@ class WxUserTagUtil:
         """
         re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/update',
                            params={'access_token': access_token},
-                           data=json.dumps({'tag': {'id': tagId,'name': newName}}))
+                           data=json.dumps({'tag': {'id': tagId, 'name': newName}}))
         return re.content
 
     @staticmethod
-    def getUserByTag(access_token,tagId,next_openid=''):
+    def getUserByTag(access_token, tagId, next_openid=''):
         """
         获得标签下的用户
         :param access_token:
@@ -348,8 +425,8 @@ class WxUserTagUtil:
         """
         # tags = []
         re = requests.post(url='https://api.weixin.qq.com/cgi-bin/user/tag/get',
-                          params={'access_token': access_token},
-                          data=json.dumps({'tagid': tagId,'next_openid': next_openid}))
+                           params={'access_token': access_token},
+                           data=json.dumps({'tagid': tagId, 'next_openid': next_openid}))
         result = json.loads(re.content, encoding='utf-8')
         count = result['count']
         members = result['data']['openid']
@@ -357,18 +434,18 @@ class WxUserTagUtil:
 
     @staticmethod
     def setUserTag(access_token, openid_list, tagId):
-       """
+        """
        批量为用户打标签
        :param access_token: 
        :param tagId: 
        :param nopenid_list:
        :return: 
        """
-       re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging',
-                          params={'access_token': access_token},
-                          data=json.dumps({'openid_list': openid_list,
-                                           'tagid':tagId}))
-       return re.content
+        re = requests.post(url='https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging',
+                           params={'access_token': access_token},
+                           data=json.dumps({'openid_list': openid_list,
+                                            'tagid': tagId}))
+        return re.content
 
     @staticmethod
     def cancelUserTag(access_token, openid_list, tagId):
@@ -401,7 +478,7 @@ class WxUserTagUtil:
             tag = json.loads(re.content.decode('utf-8'))["tagid_list"]
         except Exception as e:
             tag = ''
-            print('get tag error\n',re.content,e)
+            print('get tag error\n', re.content, e)
         return tag
 
 

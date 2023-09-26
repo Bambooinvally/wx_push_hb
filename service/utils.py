@@ -1,12 +1,16 @@
 import datetime
+import hashlib
 import json
 import os
+import time
 
 import requests
 
 from app.models import URLSource
+from wx_push.specsetting import Url_Map
 
-def getWarnLevel(source_id, app_code_id):
+
+def getWarnLevel(source_id, distination,app_code_id):
     """
     根据报警内容返回报警级别
     :param app:
@@ -16,9 +20,9 @@ def getWarnLevel(source_id, app_code_id):
     """
     level = ['三级','二级','一级']
     i = 0
-    power = getWarnByType(source_id,app_code_id,'POWER')
-    app = getWarnByType(source_id,app_code_id,'APP')
-    arc = getWarnByType(source_id,app_code_id,'ARC')
+    power = getWarnByType(source_id,distination,app_code_id,'POWER')
+    app = getWarnByType(source_id,distination,app_code_id,'APP')
+    arc = getWarnByType(source_id,distination,app_code_id,'ARC')
     if power and arc:
         return level[2]
     if arc:
@@ -27,9 +31,13 @@ def getWarnLevel(source_id, app_code_id):
         i += 1
     return level[i]
 
-def getWarnByType(source_id, app_code_id,type):
+def getWarnByType(source_id, distination,app_code_id,type):
     url = URLSource.objects.get(id=source_id).url
-    data = requests.post(url, data={"type": type,"ammeter_app_code":app_code_id})
+    timestamp = int(time.time())
+    # 生成签名，暂未加入user和password校验
+    signed = generateMD5(timestamp, source_id)
+    data = requests.post(url, data={"type": type, 'distination':distination,"ammeter_app_code":app_code_id,'source': 'wx_push', 'timestamp': timestamp,
+                                    'sign': signed})
     if data.status_code == 200:
         dataLst = json.loads(data.content.decode())
         return dataLst
@@ -86,6 +94,53 @@ def simuWarn(power,arc,remain_cur,line_temp,kettle,dpc):
     content.append(lv)
     content.append(str(datetime.datetime.now()))
     return content
+
+def generateMD5(timestamp, sourceId):
+    """
+
+    :param timestamp:
+    :param sourceId:
+    :return: source+timestamp+key -------> md5
+    """
+    wxPushSecret = "wx_push_cad431_eyemonitor"
+    source = 'wx_push'
+    md5_str = "source" + source + "sourceId" +str(sourceId) + "timeStamp" + str(timestamp) + wxPushSecret
+    h1 = hashlib.md5()
+    h1.update(md5_str.encode(encoding='utf-8'))
+    signed = h1.hexdigest()
+    return signed
+
+def SignHextoDec(Hex):
+    '''有符号16进制数转10进制'''
+    width = 32
+    dec_temp = int(Hex, 16)
+    if dec_temp > 2 ** (width - 1) - 1:
+        dec_temp = 2 ** width - dec_temp
+        Dec = 0 - dec_temp
+        return Dec
+    else:
+        return dec_temp
+
+
+def SignDectoHex(Dec):
+    '''有符号10进制数转16进制'''
+    width = 32
+    if Dec < 0:
+        Dec_temp = 2 ** width + Dec
+        Hex = hex(Dec_temp)
+        return Hex
+    else:
+        return hex(Dec)
+
+
+def ChooseUrl(sourceId,type):
+    """选择对应的Url"""
+    for key,value in Url_Map.items():
+        target = value["SOURCE"]
+        if target == int(sourceId):
+            return value[type]
+    return None
+
 
 
 

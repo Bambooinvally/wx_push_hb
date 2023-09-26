@@ -42,7 +42,7 @@
                                 <div class="list-group-item-text">
                                     <div class="row">
                                         <div class="col-md-5">
-                                            <p>手机号：{{ user.phone }}</p>
+                                            <p>学号：{{ user.code }}</p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -51,9 +51,9 @@
                                             {% for data in user.ammeter.values %}
                                             <div class="page">
                                                 <div class="page__bd page__bd_spacing">
-                                                    <div class="btn btn-default bound" data-value="{{ data.ammeter_app_code }}"
-                                                     openid="{{ user.openId }}">
-                                                        {{ data.ammeter_addr }}(设备号{{ data.ammeter_app_code }})
+                                                    <div class="btn btn-default bound" data-value0="{{ data.ammeter_app_code }}"
+                                                     data-value1="{{ data.ammeter_sensorId }}" openid="{{ user.openId }}">
+                                                        {{ data.ammeter_addr }}(设备号: {{ data.ammeter_app_code }})
                                                     </div>
                                                 </div>
                                             </div>
@@ -105,18 +105,20 @@
                 var ammeters = getAmmeter(source);
                 var current = $(this);
                 var confirmBtn = $('#'+current.attr('openid'))
-                var previous = current.attr('data-value')
+                var previous = current.attr('data-value0')  //之前的设备号
+                var previous_sensor = current.attr('data-value1')  //之前的环号
                 weui.picker(ammeters, {
                     onChange: function (result) {
                         {#console.log(result);#}
                     },
                     onConfirm: function (result) {
-                        console.log('选定'+result[0].label+result[0].value);
+                        console.log('选定:'+'寝室'+result[0].label+', 设备号'+result[0].value[0]+', 环号'+result[0].value[1]);
                         confirmBtn.removeClass('hidden');
                         confirmBtn.click(function () {
-                            postOpenid(current.attr('openid'), source, result[0].value,previous)
+                            postOpenid(current.attr('openid'), source, result[0].value[0], result[0].value[1], previous, previous_sensor)
+                            confirmBtn.addClass('hidden')
                         });
-                        current.html(result[0].label + '(设备号'+result[0].value+')')
+                        current.html(result[0].label + '(设备号: '+result[0].value[0]+')')
                         current.attr('data-value',result[0].value)
                     },
                     title: '修改绑定设备'
@@ -126,17 +128,19 @@
 
 
 
-        function postOpenid(openId, source_id, ammeter_app_code, previous_code) {
+        function postOpenid(openId, source_id, ammeter_app_code, sensorId, previous_code, previous_sensor) {
             $.ajax({
                 url: '/super/show/user',
                 type: "POST",
                 async: false,
                 data: {"openid": openId.replace(/\s+/g,""), "source_id": source_id, "ammeter_app_code":ammeter_app_code,
-                "previous_code":previous_code},
+                "sensorId": sensorId, "previous_code": previous_code, "previous_sensor": previous_sensor},
                 success: function (res) {
                     var data = JSON.parse(res);
                     if (data.state) {
                         console.log('ok')
+                        alert('修改成功！')
+                        location.reload();
                     }
                     else
                         alert('修改失败！')
@@ -155,11 +159,13 @@
             async:false,
             data: { 'source_id': source_id},
             success: function (data) {
-
-                for (var i=0;i<data.length;i++)
+                for (var i=0;i<data[0].children[0].children.length;i++)
                 {
-                    var temp = {label:data[i].addr,
-                            value:data[i].ammeter_app_code}
+                    console.log('label:', data[0].children[0].children[i].label)
+                    console.log('value:', data[0].children[0].children[i].app_code)
+                    var temp = {label:data[0].children[0].label + ' ' + data[0].children[0].children[i].label + '室',
+                                value:[data[0].children[0].children[i].app_code,
+                                       data[0].children[0].children[i].sensorId]}
                     ammeters.push(temp)
                 }
             }

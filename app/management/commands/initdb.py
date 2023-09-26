@@ -23,8 +23,10 @@ class Command(BaseCommand):
             'value':30
         })
         # 添加自己的微信openid
-        SuperUser.objects.get_or_create(openId="o-XSVwRj5uPsuu4C3ckFLpsxqPsc", name='周天宇',source_id='all',
+        # SuperUser.objects.get_or_create(openId="o-XSVwRj5uPsuu4C3ckFLpsxqPsc", name='周天宇',source_id='all',
+        #                                 domain='all')
+        SuperUser.objects.get_or_create(openId="o-XSVwU3K3EvJrtzIXLjYwkBJee8", name='陆启镐',source_id='all',
                                         domain='all')
 
-        URLSource.objects.get_or_create(url='http://tzdpc.piercingeyes.cn/api/dangerlist.json',desc='台州电瓶车试点',
+        URLSource.objects.get_or_create(url='http://hdu.piercingeyes.cn/api/dangerlist.json',desc='杭电魔眼',
                                         vaild=1)

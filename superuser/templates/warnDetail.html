@@ -51,7 +51,9 @@
         <p class="text-center">{{ location }}</p>
     </div>
     <input type="hidden" id="source" value="{{ source_id }}">
+    <input type="hidden" id="distination" value="{{ distination }}">
     <input type="hidden" id="device" value="{{ app_code_id }}">
+    <input type="hidden" id="hash" value="{{ hash }}">
     <div class="page__bd">
         <div class="weui-form-preview">
             <div class="weui-form-preview__hd">
@@ -66,7 +68,7 @@
 {#                    <span class="weui-form-preview__value">{{ insert_app }}</span>#}
 {#                </div>#}
                 <div class="weui-form-preview__item">
-                    <label class="weui-form-preview__label">牟眼多维度预警等级</label>
+                    <label class="weui-form-preview__label">魔眼多维度预警等级</label>
                     <span class="weui-form-preview__value">{{ warn_level }}</span>
                 </div>
                 <div class="weui-form-preview__item">
@@ -107,7 +109,9 @@
 {#            </div>#}
             <label class="weui-form-preview__label" style="margin-left: 15px;font-size: small">AI智能分析</label>
             <div id="container" style="height:230%"></div>
-            <div class="weui-form-preview__ft">
+            <div class="weui-form-preview__ft {% if coord == "" %}
+                    hidden
+                {% endif %} ">
                 <a class="weui-form-preview__btn weui-form-preview__btn_primary"
                    href="https://apis.map.qq.com/uri/v1/marker?marker=coord:{{ coord }};title:{{ location }};addr:报警地点&referer=myapp">导航至该地点</a>
             </div>
@@ -120,6 +124,8 @@
     function getRealtimeData() {
         var source_id = $('#source').val();
         var ammeterid = $('#device').val();
+        var distination = $('#distination').val();
+        var hash = $('#hash').val();
         var content = $('#content').html();
         //console.log(content)
         var radarData = [];
@@ -128,7 +134,7 @@
             type: 'post',
             dataType: 'json',
             sync: false,
-            data: {'source_id': source_id, 'ammeterid': ammeterid},
+            data: {'source_id': source_id, 'ammeterid': ammeterid, 'distination': distination, "hash":hash},
             success: function (data) {
                 console.log('ajax'+data.power)
                 var tp=[];
@@ -145,6 +151,8 @@
                     rc = 100;
                 if(!et)
                     et = 24;
+                if(arc == 1)
+                    arc = 90;
                 tp.push(lt);
 
                 if(content.search('违规电器') != -1) {
@@ -231,7 +239,7 @@
             radar: {
                 indicator: [
                     {name: '线温', max: 100},
-                    {name: '功率', max: 2600},
+                    {name: '功率', max: 5500},
                     {name: '电弧', max: 100},
                     {name: '剩余电流', max: 2000},
                     {name: '用电器', max: 100},

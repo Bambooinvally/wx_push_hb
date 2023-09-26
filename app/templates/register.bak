@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+
+        <link href="{% static 'bootstrap/3.3.4/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <script src="{% static 'jquery/1.11.2/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'weui/weui-master/style/weui.min.css' %}"/>
+    <script src="{% static 'weui/weui-master/src/example/zepto.min.js' %}"></script>
+{#    <script src="{% static 'weui/weui-master/src/example/example.js' %}"></script>#}
+{#    <link rel="stylesheet" href="{% static 'weui/weui-master/src/example/example.css' %}"/>#}
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+    <title>设备绑定</title>
+    <style type="text/css">
+        .board {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            padding: 30px 30px 40px 40px;
+            height: 430px;
+            overflow: auto;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        body {
+            background: {#url(/static/images/background.jpg)#} no-repeat;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="container">
+    <div class="page home js_show">
+        <!-- 头部 -->
+        <div class="page__hd">
+        </div>
+        <!-- 主体 -->
+        <div class="page__bd page__bd_spacing">
+            <div class="weui-form">
+                <div class="weui-form__text-area">
+                    <h2 class="weui-form__title">认证信息</h2>
+                </div>
+                <div class="weui-form__control-area">
+                    <div class="weui-cells__group weui-cells__group_form">
+                        <!--<div class="weui-cells__title">表单组标题</div>-->
+                        <div class="weui-cells weui-cells_form">
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
+                                <div class="weui-cell__bd">
+                                    <input id="name" class="ipt weui-input" placeholder="填写本人姓名" name="name">
+                                </div>
+                            </div>
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd"><label class="weui-label">手机号</label></div>
+                                <div class="weui-cell__bd">
+                                    <input id="phone" class="ipt weui-input" placeholder="填写本人手机号" name="phone"
+                                           type="number"
+                                           pattern="[0-9]*">
+                                </div>
+                            </div>
+
+                            <div class="page">
+
+{#                            <div class="weui-cell">#}
+{#                                <div class="weui-cell__hd"><label class="weui-label">地址</label></div>#}
+{#                                <div class="weui-cell__bd">#}
+{#                                    <input id="addr" class="ipt weui-input" placeholder="填写绑定的地址" type="text">#}
+{#                                </div>#}
+{#                            </div>#}
+                            <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after">
+                                <div class="weui-cell__hd"><label class="weui-label">安装地区</label></div>
+                                <div class="weui-cell__bd" id="showPicker">请点击选择</div>
+                            </div>
+                            <div class="weui-cell weui-cell_active weui-cell_access weui-cell_select weui-cell_select-after hidden">
+                                <div class="weui-cell__hd"><label class="weui-label">绑定设备</label></div>
+                                <div class="weui-cell__bd " id="showDevice">请点击选择</div>
+                            </div>
+
+                            <div class="weui-cell__bd">
+                                <input id="open_id"  class="weui-input" type="hidden" value="">
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input id="source_id"  class="weui-input" type="hidden" value="">
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input id="distination"  class="weui-input" type="hidden" value="">
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input id="board_id"  class="weui-input" type="hidden" value="">
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <div class="weui-form__opr-area">
+                                <a class="weui-btn weui-btn_primary weui-btn_disabled" href="javascript:"
+                                   id="showTooltips">确定</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="js_toast" style="opacity: 0; display: none;">
+                <div class="weui-mask_transparent"></div>
+                <div class="weui-toast">
+                    <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+                    <p class="weui-toast__content">已完成</p>
+                </div>
+            </div>
+        </div>
+        <!-- 尾部 -->
+        <div class="page__ft"></div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" class="form_page js_show">
+    $(function () {
+        var $toast = $('#js_toast');
+        var $input = $('.ipt');
+        $input.on('input', function () {
+            if ($input.val()) {
+                //$('#showTooltips').removeClass('weui-btn_disabled');
+            } else {
+                $('#showTooltips').addClass('weui-btn_disabled');
+            }
+        });
+        $('#showTooltips').on('click', function () {
+            if ($(this).hasClass('weui-btn_disabled')) return;
+            else {
+                console.log($('#open_id').val());
+                $.ajax({
+                    url: '/user/register',
+                    type: 'post',
+                    dataType:'json',
+                    data: { 'name': $('#name').val(),
+                            'phone': $('#phone').val(),
+                            'address': $('#addr').val(),
+                            'openId': $('#open_id').val(),
+                            'source_id':$('#source_id').val(),
+                            'distination':$('#distination').val(),
+                            'board_id':$('#board_id').val()},
+                    success: function (res) {
+                        alert(res.statue)
+                    }
+                })
+            }
+            // toptips的fixed, 如果有`animation`, `position: fixed`不生效
+            $('.page.cell').removeClass('slideIn');
+            $toast.show(100);
+            setTimeout(function () {
+                $toast.hide(100);
+            }, 2000);
+        });
+    });
+</script>
+<script>
+    var ammeters=[];
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    //前端获取code，返回给后端获得openid
+    $(function () {
+        var code = getQueryString("code");
+        if (code != null) {
+            $.ajax({
+                url: '/app/params',
+                type: 'post',
+                dataType: 'json',
+                data: {'code' : code},
+                success: function (res) {
+                        $('#open_id').val(res.openid);
+                        console.log(res);
+                }
+
+            })
+        } else {
+            alert("请使用微信访问")
+        }
+    })
+
+
+    $('#showPicker').on('click', function () {
+    var lst = [
+    {% for provinces in data %}
+    {% for province,cities in provinces.items%}
+    {
+	        label: '{{ province }}',
+	        value: '{{ province }}',
+	        children: [
+            {% for city,projects in cities.items %}
+            {
+	            label: '{{ city }}',
+	            value: '{{ city }}',
+
+	            children: [
+                 {% for project in projects|first %}
+                 {% for k,v in project.items %}
+                {
+	                label: '{{ v }}',
+	                value: {{ k }}
+	            },
+                    {% endfor %}
+                {% endfor %}
+                ]
+	        },
+            {% endfor %}
+            ]
+    },
+        {% endfor %}
+{% endfor %}
+    ];
+
+    weui.picker(lst, {
+	        depth: 3,
+	        defaultValue: [0, 1, 1],
+	        onChange: function onChange(result) {
+	            console.log(result);
+	        },
+	        onConfirm: function onConfirm(result) {
+	            //alert(result)
+	            $('#showPicker').html(result[2].label);
+                $('#source_id').val(result[2].value);
+                selectAmmeter(result[2].value)
+	        },
+	        id: 'cascadePicker',
+	        title: '选择安装地点'
+	    });
+});
+    
+    function selectAmmeter(source_id) {
+        $.ajax({
+            url: '/get/ammeters',
+            type: 'post',
+            dataType:'json',
+            data: { 'source_id': source_id},
+            success: function (data) {
+                for (var i=0;i<data.length;i++)
+                {
+                    var temp = {label:data[i].addr,
+                            value:[data[i].domain ,data[i].ammeter_app_code]}
+                    ammeters.push(temp)
+                }
+                $('#showDevice').parent().removeClass('hidden');
+            }
+        })
+    }
+
+    $('#showDevice').on('click', function () {
+        weui.picker(ammeters, {
+            onChange: function (result) {
+                console.log(result);
+            },
+            onConfirm: function (result) {
+                //console.log(result);
+                $('#showDevice').html(result[0].label)
+                $('#board_id').val(result[0].value[1])
+                $('#distination').val(result[0].value[0])
+                $('#showTooltips').removeClass('weui-btn_disabled');
+            },
+            title: '选择设备'
+        });
+    });
+</script>
+</body>
+</html>
+
+

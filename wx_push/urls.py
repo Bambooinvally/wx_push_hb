@@ -16,44 +16,57 @@ Including another URLconf
 
 import os, django
 
+from service import studentService
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
 
 django.setup()
 from django.conf.urls import url
 import app.views as aviews
 import superuser.views as suview
-from django.views import static ##新增
-from django.conf import settings ##新增
-from django.conf.urls import url ##新增
+from django.views import static  ##新增
+from django.conf import settings  ##新增
+from django.conf.urls import url  ##新增
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # wx 使用
-    url("^MP_verify_dlUHfQ1hxd6SwBwe.txt$",aviews.verify),
+    url("^MP_verify_dlUHfQ1hxd6SwBwe.txt$", aviews.verify),
     url("^wxrecv/", aviews.recv_message, name='wx-recv-message'),
-    #url("^menu/create$", aviews.create_menu, name='wx-menu-create'),
-    #url("^menu/supercreate$", aviews.create_superMenu, name='wx-supermenu-create'),
-    # url("^menu/delete$", aviews.del_menu, name='wx-menu-delete'),
+    url("^menu/create$", aviews.create_menu, name='wx-menu-create'),
+    url("^menu/supercreate$", aviews.create_superMenu, name='wx-supermenu-create'),
+    url("^menu/delete$", aviews.del_menu, name='wx-menu-delete'),
     url("^app/params$", aviews.getAppParams, name='wx-app-params'),
     url("^user/register$", aviews.register, name='wx-register'),
     url("^get/ammeters$", aviews.getAmmeters, name='get-ammeter'),
 
+    # 普通学生
+    url("^user/historyEvent$", studentService.historyEvent, name='wx-historyEvent'),
+    url("^user/faultRepair$", studentService.deviceRepair, name='wx-faultRepair'),
+    url("^app/jumps$", studentService.jumppage, name='jump-page'),
     # 测试路径
     # url("^kylinz/test$",aviews.test, name='test'),
-    
+
     ##　以下是新增
     url(r'^static/(?P<path>.*)$', static.serve,
-      {'document_root': settings.STATIC_ROOT}, name='static'),
+        {'document_root': settings.STATIC_ROOT}, name='static'),
 
     # 管理员
-    
+
     url("^logout", suview.my_logout, name='my_logout'),
     url("^login", suview.wx_login, name='wx_login'),
     url("^super/modify/user", suview.modify_user_info, name='modify-user'),
     url("^super/verify/user", suview.verify_user_info, name='verify-user'),
     url("^super/search/user", suview.search_user, name='search-user'),
-    url("^super/show/user",suview.confirmed_user_info, name='show-user'),
+    url("^super/show/user", suview.confirmed_user_info, name='show-user'),
     url("^super/warn/detail", suview.warn_detail, name='warn-detail'),
     url("^super/warn/simulate", suview.simulateWarning, name='warn-simulate'),
+    url("^super/show/repair", suview.repair_info, name='repair-user'),
+    # 推送报警事件
+    # url("^super/warn/pushwarn", suview.pushwarn, name='warn-simulate'),
+    # 获取报警事件
+    url("^super/warn/getWarnMessage", suview.getWarnMessage, name='get_warnMessage'),
+    # 获取历史记录
+    url("^super/warn/getHandleHistory", suview.getHandleHistory, name='get_handleHistory'),
 
 ]
